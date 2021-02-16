@@ -1,0 +1,209 @@
+<!--==============================-->
+<!--=        	Latest release         =-->
+<!--==============================-->
+<section class="section-padding latest-relese">
+	<div class="container">
+		<div class="row">
+			<div class="section-title style-four">
+				<!-- <h2></h2> -->
+			</div>
+			<div class="d-flex justify-content-center">
+				<div class="col-xl-10" id="moving-player">
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="latest-album-left">
+								<div class="cover-img">
+									<img class="size_174x174" [src]="albumArtUrl" alt="No Image" onerror="this.src='/assets/media/album/cover.jpg';">
+								</div>
+								<div class="album-details">
+									<div class="mb-2 d-flex align-items-center">
+										<div class="flex-wrap">
+											<h6>Now Playing</h6>
+											<div>
+												<span *ngFor="let i of [].constructor(currentSong.common.rating)"
+													class="fas fa-star icon"></span>
+												<span *ngFor="let i of [].constructor(5 - +currentSong.common.rating)"
+													class="far fa-star icon"></span>
+											</div>
+										</div>
+										<span>
+											<div class="mx-2 lds-ripple" *ngIf="playing">
+												<div></div>
+												<div></div>
+											</div>
+										</span>
+									</div>
+									<p>
+										<span>Album</span>: {{ currentSong.common.album }} <br>
+										<span>Artist</span>: {{ currentSong.name.artist }} <br>
+										<span>Genre</span>: {{ currentSong.common.genre }} <br>
+										<span>Bitrate</span>: {{ roundNumber(currentSong.format.bitrate / 1000) }} kbps <br>
+										<span>Year</span>: {{ currentSong.common.year }} <br>
+									</p>
+								</div>
+							</div>
+
+						</div>
+						<div class="col-sm-6">
+							<div class="latest-album-right">
+								<h6>{{ currentSong.name }}</h6>
+								<div class="latest-album-btn d-flex justify-content-center align-items-center" style="color: whitesmoke;">
+									<div (click)="stop()"><i class="icon fas fa-stop fa-2x mx-2"></i></div>
+									<i class="icon fas fa-fast-backward fa-2x mx-2"></i>
+									<div (click)="play()"><i class="icon fas fa-play-circle fa-3x mx-2"></i></div>
+									<div (click)="pause()"><i class="icon fas fa-pause  fa-2x mx-2"></i></div>
+									<i class="icon fas fa-fast-forward fa-2x mx-2"></i>
+									<i class="icon fas fa-volume-up fa-2x mx-2"></i>
+								</div>
+
+							</div>
+						</div>
+						<div class="col-xl-12">
+							<div class="record-player">
+								<div class="player-main">
+									<img src="/assets/media/background/record.png" alt="">
+								</div>
+								<div class="player-main-shade">
+									<img src="/assets/media/background/record-shade.png" alt="">
+								</div>
+								<div class="record-key">
+									<img src="/assets/media/background/player-key.png" alt="">
+								</div>
+							</div>
+
+						</div>
+
+						<div class="bubble-wrap">
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-4"></div>
+
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-5"></div>
+
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-2 "></div>
+
+
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-3"></div>
+
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-5"></div>
+
+						</div>
+
+						<div class="bubble-wrap-right">
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-4"></div>
+
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-5"></div>
+
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-2 "></div>
+
+
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-3"></div>
+
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-1"></div>
+
+							<div class="bubble icon-5"></div>
+
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-2 "></div>
+
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-1"></div>
+
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-4"></div>
+
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-3"></div>
+
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-5"></div>
+							<div class="bubble icon-2 "></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-1"></div>
+							<div class="bubble icon-3"></div>
+							<div class="bubble icon-4"></div>
+							<div class="bubble icon-5"></div>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.latest-album-info -->
+		</div>
+		<!-- /.row -->
+	</div>
+	<!-- /.tim-container -->
+</section>
+<!-- /#about -->

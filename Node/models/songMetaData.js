@@ -1,0 +1,34 @@
+const mongoose = require("mongoose");
+
+let songMetaDataSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    common: {
+        albumartist: String,
+        genre: [String],
+        album: String,
+        year: String,
+        composer: [String],
+        artists: [String],
+        artist: String,
+        title: String,
+        date: String,
+        rating: Number
+    },
+    format: {
+        lossless: Boolean,
+        codec: String,
+        sampleRate: Number,
+        numberOfChannels: Number,
+        bitrate: Number,
+        duration: mongoose.Decimal128
+    },
+    location: {
+        type: String,
+        required: true,
+    }
+})
+
+module.exports = mongoose.model("SongMetaData", songMetaDataSchema);
