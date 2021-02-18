@@ -2,3 +2,4 @@
 <router-outlet></router-outlet>
 <!-- <app-player-mini></app-player-mini> -->
 <app-footer></app-footer>
+<audio #audioPlayer (ended)="handleAudioEnded()" id="audioElement" style="display: none;"></audio>

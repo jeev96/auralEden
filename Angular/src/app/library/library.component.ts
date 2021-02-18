@@ -6,9 +6,7 @@ import { environment } from 'src/environments/environment';
 
 import * as fromApp from "../store/app.reducer";
 import * as LibraryActions from "./store/library.actions";
-
-declare let $: any;
-
+import * as PlayerActions from "../player/store/player.actions";
 export class DataTablesResponse {
 	data: any[];
 	draw: number;
@@ -43,7 +41,6 @@ export class LibraryComponent implements OnInit, OnDestroy {
 			this.count = libraryData.count;
 			this.error = libraryData.error;
 		});
-
 		this.dtOptions = {
 			columns: [
 				{ "name": "_id" },
@@ -52,7 +49,8 @@ export class LibraryComponent implements OnInit, OnDestroy {
 				{ "name": "album" },
 				{ "name": "duration" },
 				{ "name": "rating" },
-				{ "name": "bitrate" }
+				{ "name": "bitrate" },
+				{ "name": "controls"}
 			],
 			columnDefs: [
 				{ "width": "20%", "targets": 1 },
@@ -66,31 +64,40 @@ export class LibraryComponent implements OnInit, OnDestroy {
 			},
 			pageLength: 10,
 			lengthMenu: [10, 25, 50],
-			processing: true,
+			processing: false,
 			serverSide: true,
 			ajax: (dataTablesParameters: any, callback) => {
-				this.http
-					.post<DataTablesResponse>(environment.getLibraryDataURL, dataTablesParameters, {})
-					.subscribe(response => {
-						this.store.dispatch(new LibraryActions.SetLibraryData({
-							data: response.data,
-							draw: response.draw,
-							recordsFiltered: response.recordsFiltered,
-							recordsTotal: response.recordsTotal
-						}))
+				this.http.post<DataTablesResponse>(environment.getLibraryDataURL, dataTablesParameters, {}).subscribe(response => {
+					this.store.dispatch(new LibraryActions.SetLibraryData({
+						data: response.data,
+						draw: response.draw,
+						recordsFiltered: response.recordsFiltered,
+						recordsTotal: response.recordsTotal
+					}))
 
-						callback({
-							recordsTotal: response.recordsTotal,
-							recordsFiltered: response.recordsFiltered,
-							data: [],
-						});
+					callback({
+						recordsTotal: response.recordsTotal,
+						recordsFiltered: response.recordsFiltered,
+						data: [],
 					});
-			},
+				}, error => {
+					this.error = "Unable to Fetch Data. Please Check your Connection!!";
+				});
+			}
 		};
 	}
 
 	ngOnDestroy(): void {
 		this.storeSub.unsubscribe();
+	}
+
+	playSong(songId) {
+		this.store.dispatch(new PlayerActions.GetPlayerSongRequest(songId));
+		// this.store.dispatch(new PlayerActions.PlaySongRequest(songId));
+	}
+
+	addToPlaylist(song) {
+		this.store.dispatch(new PlayerActions.AddPlaylistSong(song));
 	}
 
 	roundNumber(val: number) {

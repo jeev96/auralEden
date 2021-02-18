@@ -25,9 +25,6 @@
 
 
 
-<section *ngIf="error">
-	{{error}}
-</section>
 
 <!--===========================-->
 <!--=        	Tabs          =-->
@@ -52,7 +49,8 @@
 			<tbody>
 				<tr *ngFor="let song of library.data; let i = index">
 					<td class="d-none">{{ song[0] }}</td>
-					<td title="{{ song[1] }}" style="padding: 20px; font-weight: 500" class="icon" routerLink="/player">{{ song[1] }}</td>
+					<td title="{{ song[1] }}" style="padding: 20px; font-weight: 500" class="icon" routerLink="/player">
+						{{ song[1] }}</td>
 					<td title="{{ song[2] }}" style="padding: 20px; font-weight: 500">{{ song[2] }}</td>
 					<td title="{{ song[3] }}" style="padding: 20px; font-weight: 500">{{ song[3] }}</td>
 					<td style="padding: 20px; font-weight: 500">{{ song[4] }}</td>
@@ -62,8 +60,8 @@
 					</td>
 					<td style="padding: 20px 0px; font-weight: 500">{{ song[6] }} kbps</td>
 					<td style="padding: 20px; font-weight: 500">
-						<i title="Play" class="icon fas fa-play mx-1"></i>
-						<i title="Add to Playlist" class="icon fas fa-stream mx-1"></i>
+						<span (click)="playSong(song[0])"><i title="Play" class="icon fas fa-play mx-1"></i></span>
+						<span (click)="addToPlaylist(song)"><i title="Add to Playlist" class="icon fas fa-stream mx-1"></i></span>
 					</td>
 				</tr>
 			</tbody>
@@ -72,222 +70,9 @@
 		<nav class="pagination-container posts-navigation text-center clearfix">
 			<div id="pagination-container"></div>
 		</nav>
+
+		<div class="text-danger text-center" *ngIf="error">{{error}}</div>
 	</div>
 	<!-- /.tim-container -->
 </section>
 <!-- /#music-tabs -->
-
-<!--================================-->
-<!--=        	Top Music          =-->
-<!--================================-->
-<section id="top-music" *ngIf="!isloading">
-	<div class="container">
-
-		<div class="section-title text-center">
-			<h2>Trending Albums <span>Hightlights</span></h2>
-			<p>
-				There are many variations of passages of Lorem Ipsum available but the majority have suffered<br>
-				alteration in some injected humour.
-			</p>
-		</div>
-
-		<div class="tab-top-music top-music-wrap">
-			<div class="tab-details tab-dark">
-				<ul class="details">
-					<li>Artist</li>
-					<li>Title</li>
-					<li>Type</li>
-					<li>Rating</li>
-					<li>Published</li>
-					<li>View</li>
-				</ul>
-			</div>
-			<!-- /.tab-details -->
-			<ul class="tabs-filter tab-filter-wrapper">
-				<li class="tim-songs-items tranding-song">
-					<ul class="songs-details">
-						<li><a href="aritist.html">Tonoy Anderson</a></li>
-						<li>Life's Mysteries</li>
-						<li>Guitar</li>
-						<li>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star-half-o"></span>
-							<span class="fa fa-star-o"></span>
-						</li>
-						<li>01-01-18</li>
-						<li><i class="fa fa-eye"></i>154332</li>
-					</ul>
-				</li>
-
-				<li class="tim-songs-items tranding-song">
-					<ul class="songs-details">
-						<li><a href="aritist.html">Tonoy Anderson</a></li>
-						<li>Life's Mysteries</li>
-						<li>Rock</li>
-						<li>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star-half-o"></span>
-							<span class="fa fa-star-o"></span>
-						</li>
-						<li>01-01-18</li>
-						<li><i class="fa fa-eye"></i>154332</li>
-					</ul>
-				</li>
-				<li class="tim-songs-items tranding-song">
-					<ul class="songs-details">
-						<li><a href="aritist.html">Harry Fernandez</a></li>
-						<li>What is love</li>
-						<li>Blues</li>
-						<li>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star-half-o"></span>
-							<span class="fa fa-star-o"></span>
-						</li>
-						<li>01-01-18</li>
-						<li><i class="fa fa-eye"></i>154332</li>
-					</ul>
-				</li>
-				<li class="tim-songs-items tranding-song">
-					<ul class="songs-details">
-						<li><a href="aritist.html">Kenneth Richardson</a></li>
-						<li>Life is beautiful</li>
-						<li>Punk Rock</li>
-						<li>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star-half-o"></span>
-							<span class="fa fa-star-o"></span>
-						</li>
-						<li>01-01-18</li>
-						<li><i class="fa fa-eye"></i>154332</li>
-					</ul>
-				</li>
-				<li class="tim-songs-items tranding-song">
-					<ul class="songs-details">
-						<li><a href="aritist.html">Keith Berry</a></li>
-						<li>Still i want you</li>
-						<li>Funk</li>
-						<li>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star-half-o"></span>
-							<span class="fa fa-star-o"></span>
-						</li>
-						<li>01-01-18</li>
-						<li><i class="fa fa-eye"></i>154332</li>
-					</ul>
-				</li>
-				<li class="tim-songs-items tranding-song">
-					<ul class="songs-details">
-						<li><a href="aritist.html">Austin Tucker</a></li>
-						<li>Go for win and run</li>
-						<li>Opera</li>
-						<li>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star-half-o"></span>
-							<span class="fa fa-star-o"></span>
-						</li>
-						<li>01-01-18</li>
-						<li><i class="fa fa-eye"></i>154332</li>
-					</ul>
-				</li>
-				<li class="tim-songs-items tranding-song">
-					<ul class="songs-details">
-						<li><a href="aritist.html">Gary Fisher</a></li>
-						<li>I love my country</li>
-						<li>Guitar</li>
-						<li>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star-half-o"></span>
-							<span class="fa fa-star-o"></span>
-						</li>
-						<li>01-01-18</li>
-						<li><i class="fa fa-eye"></i>154332</li>
-					</ul>
-				</li>
-
-				<li class="tim-songs-items tranding-song">
-					<ul class="songs-details">
-						<li><a href="aritist.html">Kelly Daniels</a></li>
-						<li>Under the sky </li>
-						<li>Funk</li>
-						<li>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star-half-o"></span>
-							<span class="fa fa-star-o"></span>
-						</li>
-						<li>01-01-18</li>
-						<li><i class="fa fa-eye"></i>154332</li>
-					</ul>
-				</li>
-
-				<li class="tim-songs-items tranding-song">
-					<ul class="songs-details">
-						<li><a href="aritist.html">Ashley Garcia</a></li>
-						<li>Its raining with my love</li>
-						<li>Opera</li>
-						<li>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star-half-o"></span>
-							<span class="fa fa-star-o"></span>
-						</li>
-						<li>01-01-18</li>
-						<li><i class="fa fa-eye"></i>154332</li>
-					</ul>
-				</li>
-
-				<li class="tim-songs-items tranding-song">
-					<ul class="songs-details">
-						<li><a href="aritist.html">Tonoy Anderson</a></li>
-						<li>I want to sale dreams </li>
-						<li>Rock</li>
-						<li>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star-half-o"></span>
-							<span class="fa fa-star-o"></span>
-						</li>
-						<li>01-01-18</li>
-						<li><i class="fa fa-eye"></i>154332</li>
-					</ul>
-				</li>
-
-				<li class="tim-songs-items tranding-song">
-					<ul class="songs-details">
-						<li><a href="aritist.html">Frank Burke</a></li>
-						<li>Life's Mysteries</li>
-						<li>Guitar</li>
-						<li>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star"></span>
-							<span class="fa fa-star-half-o"></span>
-							<span class="fa fa-star-o"></span>
-						</li>
-						<li>01-01-18</li>
-						<li><i class="fa fa-eye"></i>154332</li>
-					</ul>
-				</li>
-			</ul>
-		</div>
-	</div>
-	<!-- /.container -->
-</section>
-<!-- /#top-music -->

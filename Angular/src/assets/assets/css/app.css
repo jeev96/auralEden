@@ -7313,6 +7313,11 @@ ul.comment-list .comment-body .reply a:hover {
 	display: none;
 }
 
+.dataTables_wrapper .dataTables_processing {
+	margin-top: 60px;
+	content: "No Data to Display";
+}
+
 thead {
 	margin: 0;
 	background: #313131;
@@ -7370,6 +7375,7 @@ td {
 .dataTables_wrapper .dataTables_info {
 	font-family: "Changa", sans-serif;
 	text-align: center;
+	float: none;
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {

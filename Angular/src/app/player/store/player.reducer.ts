@@ -73,6 +73,20 @@ export function playerReducer(state = initialState, action: PlayerActions.Player
 					return song[0] !== action.payload[0];
 				})
 			}
+		case PlayerActions.CLEAR_PLAYER:
+			return {
+				playlist: [],
+				audioStream: null,
+				currentSong: null,
+				duration: null,
+				currentTime: null,
+				volume: 1,
+				playing: false,
+				paused: false,
+				stopped: true,
+				loading: false,
+				error: null
+			}
 		case PlayerActions.PLAYER_PLAY_SONG:
 			return {
 				...state,

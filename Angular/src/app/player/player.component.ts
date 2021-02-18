@@ -4,6 +4,8 @@ import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 
 import * as fromApp from "../store/app.reducer";
+import * as PlayerActions from "./store/player.actions";
+
 
 @Component({
 	selector: 'app-player',
@@ -30,8 +32,6 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.storeSub = this.store.select("player").subscribe(playerData => {
-			console.log(playerData.currentSong["_id"]);
-
 			this.albumArtUrl = "http://localhost:3000/api/song/albumArt/" + playerData.currentSong["_id"];
 			this.streamUrl = "http://localhost:3000/api/song/stream/" + playerData.currentSong["_id"];
 			this.currentSong = playerData.currentSong;
@@ -49,23 +49,17 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	play() {
-		console.log("play");
-		this.audio.src = this.streamUrl;
-		this.audio.load();
-		this.audio.play();
+		if (!this.playing)
+			this.store.dispatch(new PlayerActions.PlaySongRequest(this.currentSong["_id"]));
 	}
 
 	pause() {
-		console.log("pause");
-		this.audio.pause();
-		this.audio.removeAttribute("src");
-		this.audio.load();
+		if (this.playing)
+			this.store.dispatch(new PlayerActions.PauseSongRequest());
 	}
 
 	stop() {
-		console.log("stop");
-		this.audio.removeAttribute("src");
-		this.audio.load();
+		this.store.dispatch(new PlayerActions.StopSongRequest());
 	}
 
 	roundNumber(val: number) {

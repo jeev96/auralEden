@@ -44,3 +44,10 @@
 	height: 174px;
 	border-radius: 5px;
 }
+
+.player {
+	color: whitesmoke;
+    background: rgba(255, 255, 255, 0.20);
+    border-radius: 20px;
+    padding: 10px 0;
+}
