@@ -140,7 +140,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	roundNumber(val: number) {
-		return Math.round(val);
+		return Math.trunc(val);
 	}
 
 	formatTime(time: number, format: string = "HH:mm:ss") {

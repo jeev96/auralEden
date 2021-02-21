@@ -4,9 +4,9 @@ function createDataEntry(record) {
         record.name,
         record.common.artist ? record.common.artist : "unknown",
         record.common.album ? record.common.album : "unknown",
-        Math.round(record.format.duration / 60) + ":" + (Math.round(record.format.duration % 60) > 9 ? Math.round(record.format.duration % 60) : "0" + Math.round(record.format.duration % 60)),
+        Math.trunc(record.format.duration / 60) + ":" + (Math.trunc(record.format.duration % 60) > 9 ? Math.trunc(record.format.duration % 60) : "0" + Math.trunc(record.format.duration % 60)),
         record.common.rating,
-        Math.round(record.format.bitrate / 1000),
+        Math.trunc(record.format.bitrate / 1000),
         null
     ]
 }
