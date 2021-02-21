@@ -4434,9 +4434,9 @@ nav#accordian {
 .header_player .jp-audio .jp-type-playlist .jp-interface .jp-progress {
 	z-index: 30;
 	margin-top: 10px;
+	margin-bottom: 20px;
 	overflow: hidden;
 	height: 8px;
-	max-width: 32%;
 	width: 100%;
 	background-color: rgba(255, 255, 255, 0.9);
 }
@@ -4488,7 +4488,7 @@ nav#accordian {
 .header_player .jp-audio .jp-volume-bar {
 	display: inline-block;
 	position: relative;
-	width: 65%;
+	width: 30%;
 	height: 5px;
 	background: #fff;
 	margin-bottom: 4px;
@@ -4558,19 +4558,7 @@ nav#accordian {
 }
 
 .current-tracks {
-	float: left;
-	width: 365px;
 	position: relative;
-}
-
-.current-tracks:after {
-	position: absolute;
-	top: 20px;
-	right: 0;
-	content: '';
-	height: 60px;
-	width: 1px;
-	background: rgba(255, 255, 255, 0.5);
 }
 
 #main_player {
@@ -8300,14 +8288,14 @@ td {
 
 /* Music Playlist One */
 
-.hit-plalist {
+.hit-playlist {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 	border: 1px solid #f5f5f5;
 }
 
-.hit-plalist li {
+.hit-playlist li {
 	padding: 16px 0;
 	border-bottom: 1px solid #f5f5f5;
 	display: -moz-flex;
@@ -8320,11 +8308,11 @@ td {
 	flex-wrap: wrap;
 }
 
-.hit-plalist li:last-child {
+.hit-playlist li:last-child {
 	border-bottom: 0;
 }
 
-.hit-plalist li .sm2_button {
+.hit-playlist li .sm2_button {
 	width: 7%;
 	display: inline-block;
 	font-family: "Changa", sans-serif;
@@ -8333,39 +8321,39 @@ td {
 	text-align: center;
 }
 
-.hit-plalist li .song-name {
+.hit-playlist li .song-name {
 	width: 63%;
 	text-align: left;
 	display: inline-block;
 }
 
-.hit-plalist li span {
+.hit-playlist li span {
 	width: 10%;
 	display: inline-block;
 	text-align: center;
 	font-family: "Changa", sans-serif;
 }
 
-.hit-plalist li .video-song, .hit-plalist li .song-download {
+.hit-playlist li .video-song, .hit-playlist li .song-download {
 	width: 10%;
 	display: inline-block;
 	text-align: center;
 	color: #363636;
 }
 
-.hit-plalist li .video-song:hover, .hit-plalist li .song-download:hover {
+.hit-playlist li .video-song:hover, .hit-playlist li .song-download:hover {
 	color: #e43a90;
 }
 
-.hit-plalist li.active {
+.hit-playlist li.active {
 	background: #e43a90;
 }
 
-.hit-plalist li.active .sm2_button, .hit-plalist li.active .video-song, .hit-plalist li.active .song-download, .hit-plalist li.active span {
+.hit-playlist li.active .sm2_button, .hit-playlist li.active .video-song, .hit-playlist li.active .song-download, .hit-playlist li.active span {
 	color: #fff;
 }
 
-.hit-plalist li.active .video-song:hover, .hit-plalist li.active .song-download:hover {
+.hit-playlist li.active .video-song:hover, .hit-playlist li.active .song-download:hover {
 	color: #751043;
 }
 
@@ -9507,11 +9495,11 @@ div.jp-seeking-bg {
 	margin-left: 47%;
 }
 
-.music-playlist-two .hit-plalist .sm2_button {
+.music-playlist-two .hit-playlist .sm2_button {
 	width: 10%;
 }
 
-.music-playlist-two .hit-plalist .song-name {
+.music-playlist-two .hit-playlist .song-name {
 	width: 60%;
 }
 
@@ -9556,16 +9544,16 @@ div.jp-seeking-bg {
 	.music-playlist-two {
 		margin-left: 0px;
 	}
-	.hit-plalist li span {
+	.hit-playlist li span {
 		width: 15%;
 	}
-	.hit-plalist li .song-name {
+	.hit-playlist li .song-name {
 		width: 50%;
 	}
-	.hit-plalist li .video-song {
+	.hit-playlist li .video-song {
 		width: 14%;
 	}
-	.music-playlist-two .hit-plalist .song-name {
+	.music-playlist-two .hit-playlist .song-name {
 		width: 47%;
 	}
 }
@@ -12119,10 +12107,8 @@ div.jp-seeking-bg {
 
 .header_player.tab_page {
 	position: relative;
-	background-image: -moz/-linear-gradient(90deg, #ee658f 0%, #a33cbf 100%);
-	background-image-background-image: -web/kit-linear-gradient(90deg, #ee658f 0%, #a33cbf 100%);
-	background-image-background-image: -ms-/linear-gradient(90deg, #ee658f 0%, #a33cbf 100%);
-	border: 12px solid #fff;
+	background: transparent;
+	border-radius: 5px;
 	-webkit-box-shadow: 0px 3px 12.35px 0.65px rgba(4, 56, 115, 0.09);
 	box-shadow: 0px 3px 12.35px 0.65px rgba(4, 56, 115, 0.09);
 }
@@ -12172,7 +12158,7 @@ div.jp-seeking-bg {
 }
 
 .header_player.tab_page .jp-audio .jp-type-playlist .jp-interface .jp-progress {
-	border: 1px dashed #ec89c3;
+	border: 1px solid #ec89c3;
 }
 
 .header_player.tab_page .jp-audio .jp-type-playlist .jp-interface .jp-progress .jp-seek-bar .jp-play-bar {

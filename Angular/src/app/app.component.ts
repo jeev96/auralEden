@@ -17,6 +17,6 @@ export class AppComponent {
 	constructor(private store: Store<fromApp.AppState>) { }
 
 	handleAudioEnded() {
-		this.store.dispatch(new PlayerActions.StopSongRequest());
+		this.store.dispatch(new PlayerActions.PlayNextSongRequest());
 	}
 }

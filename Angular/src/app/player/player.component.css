@@ -45,9 +45,69 @@
 	border-radius: 5px;
 }
 
+.latest-album-right {
+	padding-left: 0;
+}
+
 .player {
 	color: whitesmoke;
-    background: rgba(255, 255, 255, 0.20);
-    border-radius: 20px;
-    padding: 10px 0;
+	background: rgba(255, 255, 255, 0.20);
+	border-radius: 20px;
+	padding: 10px 0;
+}
+
+.hit-playlist {
+	border: none;
+	font: 18px;
+}
+
+.hit-playlist li {
+	padding: 5px 0;
+	border-bottom: 1px solid #aaaaaa;
+}
+
+.music-playlist-one {
+	max-height: 200px;
+	content-visibility: auto;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+/* width */
+
+::-webkit-scrollbar {
+	width: 5px;
+}
+
+/* Track */
+
+::-webkit-scrollbar-track {
+	background: none;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.20);
+	border-radius: 3px;
+}
+
+/* Handle on hover */
+
+::-webkit-scrollbar-thumb:hover {
+	background: none;
+}
+
+.jp-controls button {
+	color: whitesmoke;
+}
+
+.jp-controls .main {
+	color: whitesmoke;
+}
+
+.jp-progress {
+	border: 1px solid #ec89c3;
+	max-width: 100%;
+
 }

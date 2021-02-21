@@ -4,7 +4,7 @@ export interface State {
 	playlist: any[],
 	currentSong: any,
 	duration: number | undefined,
-	currentTime: number | undefined,
+	timeElapsed: number | undefined,
 	volume: number,
 	playing: boolean,
 	paused: boolean,
@@ -16,8 +16,8 @@ export interface State {
 const initialState: State = {
 	playlist: [],
 	currentSong: null,
-	duration: null,
-	currentTime: null,
+	duration: 100,
+	timeElapsed: 0,
 	volume: 1,
 	playing: false,
 	paused: false,
@@ -32,6 +32,7 @@ export function playerReducer(state = initialState, action: PlayerActions.Player
 			return {
 				...state,
 				currentSong: null,
+				timeElapsed: 0,
 				playing: false,
 				paused: false,
 				stopped: true,
@@ -41,6 +42,7 @@ export function playerReducer(state = initialState, action: PlayerActions.Player
 			return {
 				...state,
 				currentSong: null,
+				timeElapsed: 0,
 				playing: false,
 				paused: false,
 				stopped: true,
@@ -51,15 +53,21 @@ export function playerReducer(state = initialState, action: PlayerActions.Player
 			return {
 				...state,
 				currentSong: action.payload,
+				duration: +action.payload.format.duration.$numberDecimal,
 				playing: true,
 				paused: false,
-				stopped: true,
+				stopped: false,
 				loading: false,
 			}
 		case PlayerActions.CLEAR_PLAYER_PLAYLIST:
 			return {
 				...state,
-				playlist: []
+				playlist: [],
+				timeElapsed: 0,
+				currentSong: null,
+				playing: false,
+				paused: false,
+				stopped: true,
 			}
 		case PlayerActions.ADD_PLAYLIST_SONG:
 			return {
@@ -70,16 +78,17 @@ export function playerReducer(state = initialState, action: PlayerActions.Player
 			return {
 				...state,
 				playlist: state.playlist.filter((song) => {
-					return song[0] !== action.payload[0];
+					return song[0] !== action.payload;
 				})
 			}
 		case PlayerActions.CLEAR_PLAYER:
 			return {
+				...state,
 				playlist: [],
 				audioStream: null,
 				currentSong: null,
-				duration: null,
-				currentTime: null,
+				duration: 100,
+				timeElapsed: 0,
 				volume: 1,
 				playing: false,
 				paused: false,
@@ -107,8 +116,19 @@ export function playerReducer(state = initialState, action: PlayerActions.Player
 				playing: false,
 				paused: false,
 				stopped: true,
-				currentTime: null
+				timeElapsed: 0
 			}
+		case PlayerActions.CHANGE_VOLUME:
+			return {
+				...state,
+				volume: action.payload
+			}
+		case PlayerActions.SEEK_TRACK:
+			return {
+				...state,
+				timeElapsed: action.payload,
+			}
+		case PlayerActions.NOOP_ACTION:
 		default: return state
 	}
 }

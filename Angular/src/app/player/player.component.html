@@ -13,13 +13,15 @@
 						<div class="col-sm-6">
 							<div class="latest-album-left">
 								<div class="cover-img">
-									<img class="size_174x174" [src]="albumArtUrl" alt="No Image" onerror="this.src='/assets/media/album/cover.jpg';">
+									<img class="size_174x174" [src]="albumArtUrl" alt="No Image"
+										onerror="this.src='/assets/media/album/cover.jpg';">
 								</div>
 								<div class="album-details">
 									<div class="mb-2 d-flex align-items-center">
 										<div class="flex-wrap">
-											<h6>Now Playing</h6>
-											<div>
+											<h6 *ngIf="currentSong">Now Playing</h6>
+											<h6 *ngIf="!currentSong">Awaiting Input</h6>
+											<div *ngIf="currentSong">
 												<span *ngFor="let i of [].constructor(currentSong.common.rating)"
 													class="fas fa-star icon"></span>
 												<span *ngFor="let i of [].constructor(5 - +currentSong.common.rating)"
@@ -33,11 +35,12 @@
 											</div>
 										</span>
 									</div>
-									<p>
+									<p *ngIf="currentSong">
 										<span>Album</span>: {{ currentSong.common.album }} <br>
 										<span>Artist</span>: {{ currentSong.name.artist }} <br>
 										<span>Genre</span>: {{ currentSong.common.genre }} <br>
-										<span>Bitrate</span>: {{ roundNumber(currentSong.format.bitrate / 1000) }} kbps <br>
+										<span>Bitrate</span>: {{ roundNumber(currentSong.format.bitrate / 1000) }} kbps
+										<br>
 										<span>Year</span>: {{ currentSong.common.year }} <br>
 									</p>
 								</div>
@@ -45,17 +48,107 @@
 
 						</div>
 						<div class="col-sm-6">
-							<div class="latest-album-right">
-								<h6>{{ currentSong.name }}</h6>
-								<div class="player latest-album-btn d-flex justify-content-center align-items-center" style="color: whitesmoke;">
-									<div (click)="stop()"><i class="icon fas fa-stop fa-2x mx-2"></i></div>
-									<i class="icon fas fa-fast-backward fa-2x mx-2"></i>
-									<div (click)="play()"><i class="icon fas fa-play-circle fa-3x mx-2"></i></div>
-									<div (click)="pause()"><i class="icon fas fa-pause  fa-2x mx-2"></i></div>
-									<i class="icon fas fa-fast-forward fa-2x mx-2"></i>
-									<i class="icon fas fa-volume-up fa-2x mx-2"></i>
-								</div>
+							<!-- Audio Player -->
+							<div class="player-container latest-album-right">
+								<div class="header_player tab_page">
+									<!-- Audio Player -->
+									<div class="player-container">
+										<div class="current-tracks">
+											<div id="nowPlaying">
+												<h3 class="track-name" *ngIf="currentSong">
+													{{ currentSong.name }}
+												</h3>
+												<h3 class="track-name" *ngIf="!currentSong">...</h3>
+												<span class="artist-name" *ngIf="currentSong">
+													{{ currentSong.name.artist }}
+												</span>
+												<span class="artist-name" *ngIf="!currentSong">...</span>
+											</div>
+											<!-- #nowPlaying -->
+										</div>
+										<!-- /.current-tracks -->
+										<div id="header_player" class="jp-audio">
+											<div class="jp-type-playlist clearfix">
+												<div
+													class="jp-gui jp-interface d-flex align-items-center justify-content-between flex-wrap">
+													<div class="slidecontainer col-sm-12 m-2">
+														<input style="width: inherit;" type="range" min="0"
+															[max]="roundNumber(duration)" [value]="timeElapsed" class="slider"
+															id="seekTrack" (change)="seekTrack($event)">
+													</div>
 
+													<div
+														class="jp-controls d-flex col-sm-12 align-items-center justify-content-end">
+														<div class="mx-3">
+															{{ roundNumber(timeElapsed / 60) + ":" +
+															(roundNumber(timeElapsed % 60) > 9 ?
+															roundNumber(timeElapsed % 60) : "0" +
+															roundNumber(timeElapsed % 60)) }}
+														</div>
+														<button>
+															<i class="icon fas fa-random"></i>
+														</button>
+														<button>
+															<i class="icon fas fa-redo"></i>
+														</button>
+														<button (click)="stop()">
+															<i class="icon fas fa-stop"></i>
+														</button>
+														<button (click)="previous()">
+															<i class="icon fas fa-fast-backward"> </i>
+														</button>
+														<button *ngIf="!playing" class="jp-main" (click)="play()">
+															<i class="icon fas fa-play-circle fa-3x"></i>
+														</button>
+														<button *ngIf="playing" class="jp-main" (click)="pause()">
+															<i class="icon fas fa-pause-circle fa-3x"></i>
+														</button>
+														<button (click)="next()">
+															<i class="icon fas fa-fast-forward"></i>
+														</button>
+														<button *ngIf="volume > 0" (click)="mute(true)">
+															<i class="icon fas fa-volume-up"></i>
+														</button>
+														<button *ngIf="volume === 0" (click)="mute(false)">
+															<i class="icon fas fa-volume-mute"></i>
+														</button>
+														<div class="slidecontainer mr-4">
+															<input type="range" min="0" max="100" [value]="volume"
+																class="slider" id="volume"
+																(input)="changeVolume($event)">
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="music-playlist-one mt-2">
+								<ul class="hit-playlist">
+									<li *ngFor="let song of playlist"
+										[ngClass]="{'text-white' :  currentSong && currentSong['_id'] === song[0]}">
+										<div class="col-sm-2">
+											<span (click)="pause()"
+												*ngIf="(currentSong && currentSong['_id'] === song[0]) && playing"><i
+													class="icon fas fa-pause mr-2"></i></span>
+											<span (click)="play()"
+												*ngIf="(currentSong && currentSong['_id'] === song[0]) && !playing"><i
+													class="icon fas fa-play mr-2"></i></span>
+											<span (click)="changeCurrentSong(song[0])"
+												*ngIf="currentSong && currentSong['_id'] !== song[0]"><i
+													class="icon fas fa-play mr-2"></i></span>
+										</div>
+										<span class="song-name col-sm-6">{{ song[1] }}</span>
+										<span class="dur col-sm-2">{{ song[4] }}</span>
+										<span class="col-sm-1" (click)="removeFromPlaylist(song[0])">
+											<i title="Remove from Playlist" class="icon fa fa-times"></i>
+										</span>
+										<span class="col-sm-1" (click)="downloadSong(song[0], song[1])">
+											<i title="Download" class="icon fa fa-download"></i>
+										</span>
+									</li>
+								</ul>
 							</div>
 						</div>
 						<div class="col-xl-12">

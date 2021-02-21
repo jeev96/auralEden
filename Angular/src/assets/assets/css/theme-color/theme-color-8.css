@@ -374,15 +374,15 @@ ul.products li.product .woocommerce-loop-product__title a:hover {
 }
 
 /* Music Playlist One */
-.hit-plalist li .video-song:hover, .hit-plalist li .song-download:hover {
+.hit-playlist li .video-song:hover, .hit-playlist li .song-download:hover {
   color: #7940d7;
 }
 
-.hit-plalist li.active {
+.hit-playlist li.active {
   background: #7940d7;
 }
 
-.hit-plalist li.active .video-song:hover, .hit-plalist li.active .song-download:hover {
+.hit-playlist li.active .video-song:hover, .hit-playlist li.active .song-download:hover {
   color: #351668;
 }
 

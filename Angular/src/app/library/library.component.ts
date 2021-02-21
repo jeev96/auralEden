@@ -29,7 +29,12 @@ export class LibraryComponent implements OnInit, OnDestroy {
 	page = 0;
 	dtOptions: any = {};
 
+	currentSongId = null;
+	playing = false;
+	playlistIds = [];
+
 	private storeSub: Subscription;
+	private playerSub: Subscription;
 
 	constructor(private store: Store<fromApp.AppState>, private http: HttpClient) { }
 
@@ -41,6 +46,13 @@ export class LibraryComponent implements OnInit, OnDestroy {
 			this.count = libraryData.count;
 			this.error = libraryData.error;
 		});
+		this.playerSub = this.store.select("player").subscribe(playerData => {
+			if (playerData.currentSong) {
+				this.currentSongId = playerData.currentSong["_id"];
+			}
+			this.playing = playerData.playing;
+			this.playlistIds = playerData.playlist.map(song => song[0]);
+		});
 		this.dtOptions = {
 			columns: [
 				{ "name": "_id" },
@@ -50,7 +62,7 @@ export class LibraryComponent implements OnInit, OnDestroy {
 				{ "name": "duration" },
 				{ "name": "rating" },
 				{ "name": "bitrate" },
-				{ "name": "controls"}
+				{ "name": "controls" }
 			],
 			columnDefs: [
 				{ "width": "20%", "targets": 1 },
@@ -89,15 +101,23 @@ export class LibraryComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		this.storeSub.unsubscribe();
+		this.playerSub.unsubscribe();
 	}
 
 	playSong(songId) {
 		this.store.dispatch(new PlayerActions.GetPlayerSongRequest(songId));
-		// this.store.dispatch(new PlayerActions.PlaySongRequest(songId));
+	}
+
+	pauseSong() {
+		this.store.dispatch(new PlayerActions.PauseSongRequest());
 	}
 
 	addToPlaylist(song) {
-		this.store.dispatch(new PlayerActions.AddPlaylistSong(song));
+		this.store.dispatch(new PlayerActions.AddPlaylistSongRequest(song));
+	}
+
+	removeFromPlaylist(songId) {
+		this.store.dispatch(new PlayerActions.DeletePlaylistSongRequest(songId));
 	}
 
 	roundNumber(val: number) {

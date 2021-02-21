@@ -5,7 +5,7 @@ import { Router } from "@angular/router";
 import { Actions, Effect, ofType } from "@ngrx/effects";
 import { Store } from "@ngrx/store";
 import { of } from "rxjs";
-import { catchError, map, switchMap, take, tap, withLatestFrom } from "rxjs/operators";
+import { catchError, concatMap, map, switchMap, take, tap, withLatestFrom } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 
 import * as fromApp from "../../store/app.reducer";
@@ -43,19 +43,37 @@ export class PlayerEffects {
 	@Effect()
 	getSongDataRequest = this.actions$.pipe(ofType(PlayerActions.GET_PLAYER_SONG_REQUEST), switchMap((playerActions: PlayerActions.GetPlayerSongRequest) => {
 		return this.http.get<SongResponseData>(environment.getLibraryDataURL + "/" + playerActions.payload);
-	}), map((response) => {
-		this.setAudioElementSource("http://localhost:3000/api/song/stream/" + response._id);
+	}), map((response, playerState) => {
+		this.setAudioElementSource(environment.streamUrl + response["_id"]);
 		return new PlayerActions.SetCurrentSongData(response);
+	}), concatMap((response) => {
+		return of(response).pipe(withLatestFrom(this.store.select("player")));
+	}), tap(([response, playerState]) => {
+		const index = playerState.playlist.map((song) => song[0]).indexOf(response.payload["_id"]);
+		if (index < 0) {
+			this.store.dispatch(new PlayerActions.AddPlaylistSong([
+				response.payload._id.toString(),
+				response.payload.name,
+				response.payload.common.artist ? response.payload.common.artist : "unknown",
+				response.payload.common.album ? response.payload.common.album : "unknown",
+				Math.round(response.payload.format.duration.$numberDecimal / 60) + ":" + (Math.round(response.payload.format.duration.$numberDecimal % 60) > 9 ? Math.round(response.payload.format.duration.$numberDecimal % 60) : "0" + Math.round(response.payload.format.duration.$numberDecimal % 60)),
+				response.payload.common.rating,
+				Math.round(response.payload.format.bitrate / 1000),
+				null
+			]));
+		}
+	}), map(([response, playerState]) => {
+		return response;
 	}), catchError((error: any) => {
 		return of(new PlayerActions.GetPlayerSongError(error.message));
 	}));
 
 	@Effect()
 	playSong = this.actions$.pipe(ofType(PlayerActions.PLAYER_PLAY_SONG_REQUEST), withLatestFrom(this.store.select("player")), map(([actionData, playerState]) => {
-		if (playerState.currentSong == null && playerState.playlist.length === 0) {
-			return new PlayerActions.ClearPlayer();
+		if (playerState.currentSong == null || playerState.playlist.length === 0) {
+			return new PlayerActions.ClearPlayerRequest();
 		} else if (playerState.stopped == true && playerState.currentSong != null) {
-			this.setAudioElementSource("http://localhost:3000/api/song/stream/" + playerState.currentSong["_id"]);
+			this.setAudioElementSource(environment.streamUrl + playerState.currentSong["_id"]);
 		}
 		this.playAudioElementSource();
 		return new PlayerActions.PlaySong();
@@ -74,17 +92,95 @@ export class PlayerEffects {
 	@Effect()
 	stopSong = this.actions$.pipe(ofType(PlayerActions.PLAYER_STOP_SONG_REQUEST), map(() => {
 		this.removeAudioElemetSource();
-
 		return new PlayerActions.StopSong();
 	}), catchError((error: any) => {
 		return of(new PlayerActions.GetPlayerSongError(error.message));
 	}));
 
+	@Effect()
+	clearPlayer = this.actions$.pipe(ofType(PlayerActions.CLEAR_PLAYER_REQUEST), map(() => {
+		this.removeAudioElemetSource();
+		return new PlayerActions.ClearPlayer();
+	}), catchError((error: any) => {
+		return of(new PlayerActions.GetPlayerSongError(error.message));
+	}));
+
+	@Effect()
+	addToPlaylist = this.actions$.pipe(ofType(PlayerActions.ADD_PLAYLIST_SONG_REQUEST), map((actionData: PlayerActions.AddPlaylistSongRequest) => {
+		return actionData.payload
+	}), concatMap((action) => {
+		return of(action).pipe(withLatestFrom(this.store.select("player")));
+	}), map(([payload, playerState]) => {
+		const index = playerState.playlist.map((song) => song[0]).indexOf(payload[0]);
+		if (index >= 0) {
+			return new PlayerActions.NoopAction();
+		}
+		return new PlayerActions.AddPlaylistSong(payload);
+	}), catchError((error: any) => {
+		return of(new PlayerActions.GetPlayerSongError(error.message));
+	}));
+
+	@Effect()
+	removeFromPlaylist = this.actions$.pipe(ofType(PlayerActions.DELETE_PLAYLIST_SONG_REQUEST), map((actionData: PlayerActions.DeletePlaylistSongRequest) => {
+		return actionData.payload
+	}), concatMap((payload) => {
+		return of(payload).pipe(withLatestFrom(this.store.select("player")));
+	}), tap(([payload, playerState]) => {
+		if (playerState.playlist.length > 1 && playerState.currentSong && payload === playerState.currentSong["_id"]) {
+			this.store.dispatch(new PlayerActions.PlayNextSongRequest());
+		}
+	}), map(([payload, playerState]) => {
+		if (playerState.playlist.length === 1) {
+			return new PlayerActions.ClearPlayerRequest();
+		}
+		return new PlayerActions.DeletePlaylistSong(payload);
+	}), catchError((error: any) => {
+		return of(new PlayerActions.GetPlayerSongError(error.message));
+	}));
+
+	@Effect()
+	playNextSong = this.actions$.pipe(ofType(PlayerActions.PLAYER_PLAY_NEXT_SONG_REQUEST), withLatestFrom(this.store.select("player")), map(([actionData, playerState]) => {
+		const index = playerState.playlist.map((song) => song[0]).indexOf(playerState.currentSong["_id"]);
+		if (playerState.playlist.length === 0) {
+			return new PlayerActions.ClearPlayer();
+		}
+		if (index < 0 || index === playerState.playlist.length - 1) {
+			return new PlayerActions.StopSongRequest();
+		}
+		return new PlayerActions.GetPlayerSongRequest(playerState.playlist[index + 1][0]);
+	}), catchError((error: any) => {
+		return of(new PlayerActions.GetPlayerSongError(error.message));
+	}));
+
+	@Effect()
+	playPreviousSong = this.actions$.pipe(ofType(PlayerActions.PLAYER_PLAY_PREVIOUS_SONG_REQUEST), withLatestFrom(this.store.select("player")), map(([actionData, playerState]) => {
+		const index = playerState.playlist.map((song) => song[0]).indexOf(playerState.currentSong["_id"]);
+		if (index <= 0) {
+			return new PlayerActions.StopSongRequest();
+		}
+		return new PlayerActions.GetPlayerSongRequest(playerState.playlist[index - 1][0]);
+	}), catchError((error: any) => {
+		return of(new PlayerActions.GetPlayerSongError(error.message));
+	}));
+
+	@Effect()
+	changeVolume = this.actions$.pipe(ofType(PlayerActions.CHANGE_VOLUME_REQUEST), map((actionData: PlayerActions.ChangeVolumeRequest) => {
+		this.changeAudioElementVolume(actionData.payload);
+		return new PlayerActions.ChangeVolume(actionData.payload);
+	}))
+
+	@Effect()
+	seekTrack = this.actions$.pipe(ofType(PlayerActions.SEEK_TRACK_REQUEST), map((actionData: PlayerActions.SeekTrackRequest) => {
+		if (actionData.payload.manualEntry) {
+			this.seekAudioElement(actionData.payload.timeElapsed);
+		}
+		return new PlayerActions.SeekTrack(actionData.payload.timeElapsed);
+	}))
+
 	@Effect({ dispatch: false })
 	setSongData = this.actions$.pipe(ofType(PlayerActions.SET_CURRENT_SONG_DATA), map(() => {
 		this.playAudioElementSource();
 	}));
-
 
 	private removeAudioElemetSource() {
 		try {
@@ -107,6 +203,16 @@ export class PlayerEffects {
 	private playAudioElementSource() {
 		let audioElement = this.document.getElementsByTagName('audio')[0];
 		audioElement.play();
+	}
+
+	private changeAudioElementVolume(value: number) {
+		let audioElement = this.document.getElementsByTagName('audio')[0];
+		audioElement.volume = value;
+	}
+
+	private seekAudioElement(value: number) {
+		let audioElement = this.document.getElementsByTagName('audio')[0];
+		audioElement.currentTime = value;
 	}
 
 	private setAudioElementSource(source) {

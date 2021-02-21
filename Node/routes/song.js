@@ -37,16 +37,30 @@ router.get("/stream/:id", async function (req, res) {
         const dbEntry = await dbService.findById(req.params.id);
         const type = mime.lookup(dbEntry.location);
 
-        const stream = fs.createReadStream(dbEntry.location);
-        stream.on('open', function () {
-            res.set('Content-Type', type);
-            stream.pipe(res);
-        });
-        stream.on('error', function () {
-            res.set('Content-Type', 'text/plain');
-            res.status(404).end('Not found');
-        });
+        const filePath = dbEntry.location;
+        const stat = fs.statSync(filePath);
+        const total = stat.size;
 
+        if (req.headers.range) {
+            const range = req.headers.range;
+            const parts = range.replace(/bytes=/, "").split("-");
+            const partialstart = parts[0];
+            const partialend = parts[1];
+
+            const start = parseInt(partialstart, 10);
+            const end = partialend ? parseInt(partialend, 10) : total - 1;
+            const chunksize = (end - start) + 1;
+            const readStream = fs.createReadStream(filePath, { start: start, end: end });
+            res.writeHead(206, {
+                'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
+                'Accept-Ranges': 'bytes', 'Content-Length': chunksize,
+                'Content-Type': type
+            });
+            readStream.pipe(res);
+        } else {
+            res.writeHead(200, { 'Content-Length': total, 'Content-Type': type });
+            fs.createReadStream(filePath).pipe(res);
+        }
     } catch (error) {
         return res.status(500).send({
             status: "faliure",
