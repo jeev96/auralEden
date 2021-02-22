@@ -23,6 +23,7 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinne
 import { LibraryEffects } from './library/store/library.effects';
 import { PlayerEffects } from './player/store/player.effects';
 import { DataTablesModule } from 'angular-datatables';
+import { NgxDropzoneModule } from 'ngx-dropzone';
 
 
 @NgModule({
@@ -46,6 +47,7 @@ import { DataTablesModule } from 'angular-datatables';
 		ReactiveFormsModule,
 		CommonModule,
 		DataTablesModule,
+		NgxDropzoneModule,
 		StoreModule.forRoot(fromApp.appReducer),
 		EffectsModule.forRoot([SettingsEffects, LibraryEffects, PlayerEffects])
 	],

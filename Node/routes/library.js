@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const dbService = require("../service/Database/songMetaData");
+const fileService = require("../service/file");
+const musicService = require("../service/musicInfo");
 const dataTablesService = require("../service/dataTables");
 
 // get datatables display data
@@ -19,6 +21,26 @@ router.post("/", async function (req, res) {
         });
     }
 });
+
+router.post("/upload", async function (req, res) {
+    try {
+        console.log(req.files);
+        const fileLocations = await fileService.uploadFiles(req.files);
+        const filesMetaData = await musicService.getFileMetaData(fileLocations);
+        const result = await dbService.insertMany(filesMetaData, false);
+
+        let data = {
+            status: "success",
+            count: result.length
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send({
+            status: "faliure",
+            error: error.message
+        });
+    }
+})
 
 // get single file data
 router.get("/:id", async function (req, res) {

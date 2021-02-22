@@ -19,7 +19,8 @@
 <!-- Contact bottom area Start -->
 <section class="contuct-bottom section-padding">
 	<div class="container">
-		<div class="row justify-content-center">
+
+		<div class="row justify-content-center mb-4">
 			<div class="col-md-10 col-lg-8">
 				<div class="con-bottom-inner">
 					<h4>Settings</h4>
@@ -42,15 +43,63 @@
 							<app-loading-spinner></app-loading-spinner>
 						</div>
 						<form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
-							<input type="text" formControlName="mediaLocation" id="mediaLocation" placeholder="Media Location" class="mar-r col-sm-6">
-							<input type="text" class="col-sm-6" formControlName="theme" id="theme">
-							<button class="btn btn-secondary col-sm-4" type="submit" [disabled]="!settingsForm.valid">Submit</button>
+
+							<div formArrayName="scanLocations">
+								<div *ngFor="let locationControl of controls; let i = index" [formGroupName]="i"
+									class="d-flex align-items-center my-1">
+									<input type="text" formControlName="mediaLocation" placeholder="Media Location"
+										class="mar-r col-sm-10">
+									<div (click)="onAddIngredient()" class="col-sm-1"><i
+											class="icon fas fa-plus-circle fa-2x"></i></div>
+									<div *ngIf="i !== 0" (click)="onDeleteIngredient(i)" class="col-sm-1"><i
+											class="icon fas fa-times fa-2x"></i></div>
+								</div>
+							</div>
+
+							<!-- <input type="text" class="col-sm-6" formControlName="theme" id="theme"> -->
+							<button class="btn btn-secondary col-sm-4" type="submit"
+								[disabled]="!settingsForm.valid">Submit</button>
 						</form>
 					</div>
 				</div>
-
 			</div>
 		</div>
+
+		<div class="row justify-content-center my-4">
+			<div class="col-md-10 col-lg-8">
+				<div class="con-bottom-inner">
+					<h4>Upload Songs</h4>
+					<div class="per-social">
+						<ul>
+							<li><a href="#"><i class="fas fa-music"></i></a></li>
+							<li><a href="#"><i class="fas fa-drum"></i></a></li>
+							<li><a href="#"><i class="fas fa-guitar"></i></a></li>
+							<li><a href="#"><i class="fas fa-drum-steelpan"></i></a></li>
+							<li><a href="#"><i class="fas fa-headphones"></i></a></li>
+							<li><a href="#"><i class="fas fa-microphone"></i></a></li>
+							<li><a href="#"><i class="fas fa-podcast"></i></a></li>
+							<li><a href="#"><i class="fas fa-sliders-h"></i></a></li>
+						</ul>
+					</div>
+					<p>Dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
+
+					<div class="con-page-form col-sm-12">
+						<ngx-dropzone (change)="onSelect($event)" ngx-dropzone [accept]="'audio/*'">
+							<ngx-dropzone-label>Drop it, baby!</ngx-dropzone-label>
+							<ngx-dropzone-preview *ngFor="let file of uploadFiles" [removable]="true"
+								(removed)="onRemove(f)">
+								<ngx-dropzone-label>{{ file.name }} ({{ file.type }})</ngx-dropzone-label>
+							</ngx-dropzone-preview>
+						</ngx-dropzone>
+					</div>
+
+					<button (click)="onUploadFiles()" class="btn btn-secondary col-sm-4">
+						Upload
+					</button>
+				</div>
+			</div>
+		</div>
+
 	</div>
 </section>
 <!-- Contact bottom area end -->

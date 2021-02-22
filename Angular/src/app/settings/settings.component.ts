@@ -1,8 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 import * as fromApp from "../store/app.reducer";
 import * as SettingsActions from "./store/settings.actions";
@@ -15,16 +17,19 @@ import * as SettingsActions from "./store/settings.actions";
 export class SettingsComponent implements OnInit {
 	settingsForm: FormGroup;
 
+	uploadFiles: File[] = [];
+	scannedLocations = [];
 	isLoading = false;
 	scannedFiles = 0;
 
 	private storeSub: Subscription;
 
-	constructor(private route: ActivatedRoute, private router: Router, private store: Store<fromApp.AppState>) { }
+	constructor(private route: ActivatedRoute, private router: Router, private store: Store<fromApp.AppState>, private http: HttpClient) { }
 
 	ngOnInit(): void {
 		this.storeSub = this.store.select("settings").subscribe(settings => {
 			this.isLoading = settings.loading;
+			this.scannedLocations = settings.mediaLocation;
 		});
 		this.initForm();
 	}
@@ -37,28 +42,81 @@ export class SettingsComponent implements OnInit {
 
 	private initForm() {
 		let mediaLocation = [];
-		let theme = "";
+		let scanLocations = new FormArray([]);
+
+		if (this.scannedLocations.length > 0) {
+			for (let location of this.scannedLocations) {
+				scanLocations.push(new FormGroup({ "mediaLocation": new FormControl(location, Validators.required) }));
+			}
+		} else {
+			scanLocations.push(new FormGroup({ "mediaLocation": new FormControl(null, Validators.required) }));
+		}
 
 		this.storeSub = this.store.select("settings").subscribe(settings => {
 			mediaLocation = settings.mediaLocation;
-			theme = settings.appTheme;
 		})
 
 		this.settingsForm = new FormGroup({
-			"mediaLocation": new FormControl(mediaLocation, Validators.required),
-			"theme": new FormControl(theme, Validators.required)
+			"scanLocations": scanLocations,
 		});
 
 	}
 
 	onSubmit() {
-		console.log(this.settingsForm.value.mediaLocation);
+		const locations = this.settingsForm.value.scanLocations.map(location => location.mediaLocation);
+		console.log(locations);
 
-		this.store.dispatch(new SettingsActions.SetMediaLocationRequest([this.settingsForm.value.mediaLocation]));
-		this.store.dispatch(new SettingsActions.SetTheme(this.settingsForm.value.theme));
+		this.store.dispatch(new SettingsActions.SetMediaLocationRequest(locations));
 	}
 
 	onCancel() {
 		this.router.navigate(["../"], { relativeTo: this.route });
+	}
+
+	onAddIngredient() {
+		(<FormArray>this.settingsForm.get("scanLocations")).push(new FormGroup({
+			"mediaLocation": new FormControl(null, Validators.required)
+		}))
+	}
+
+	onDeleteIngredient(index) {
+		(<FormArray>this.settingsForm.get("scanLocations")).removeAt(index);
+	}
+
+	get controls() {
+		return (<FormArray>this.settingsForm.get('scanLocations')).controls;
+	}
+
+	onSelect(event) {
+		console.log(event);
+		this.uploadFiles.push(...event.addedFiles);
+	}
+
+	onRemove(event) {
+		console.log(event);
+		this.uploadFiles.splice(this.uploadFiles.indexOf(event), 1);
+	}
+
+	clearFiles() {
+		this.uploadFiles.splice(0, this.uploadFiles.length);
+	}
+
+	onUploadFiles() {
+		if (this.uploadFiles.length === 0) {
+			return;
+		}
+
+		let formData = new FormData();
+
+		for (let i = 0; i < this.uploadFiles.length; i++) {
+			formData.append("data", this.uploadFiles[i]);
+		}
+
+		this.http.post(environment.uploadUrl, formData).subscribe((res) => {
+			console.log(res);
+			this.clearFiles();
+		}, error => {
+			console.log(error);
+		})
 	}
 }

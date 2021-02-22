@@ -5,9 +5,12 @@
 export const environment = {
 	production: false,
 	setMediaLocationUrl: "http://localhost:3000/api/settings",
+
 	getLibraryDataURL: "http://localhost:3000/api/library",
+	uploadUrl: "http://localhost:3000/api/library/upload",
+
 	albumArtUrl: "http://localhost:3000/api/song/albumArt/",
-	streamUrl: "http://localhost:3000/api/song/stream/"
+	streamUrl: "http://localhost:3000/api/song/stream/",
 };
 
 /*

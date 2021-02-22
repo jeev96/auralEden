@@ -23,3 +23,7 @@ button {
     height: 55px;
     line-height: 0;
 }
+
+.icon:hover {
+	color: #e43a90
+}

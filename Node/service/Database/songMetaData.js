@@ -72,9 +72,11 @@ module.exports = {
             throw (error);
         }
     },
-    insertMany: async function (data) {
+    insertMany: async function (data, removeAll = true) {
         try {
-            await deleteAll();
+            if (removeAll) {
+                await deleteAll();
+            }
             return await SongMetaData.insertMany(data);
         } catch (error) {
             console.log(error);

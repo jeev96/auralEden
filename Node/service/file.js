@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require("path");
 
 const musicFileTypes = require("../constants/musicFileTypes");
+const allowedMimeTypes = ["audio/mpeg", "audio/ogg", "audio/aac", "audio/mp4", "audio/flac", "audio/x-flac", "audio/wav", "audio/x-ms-wma"]
 
 async function scanMusicFiles(dir, allFiles = []) {
     const files = (await fs.readdir(dir)).map(file => {
@@ -20,6 +21,40 @@ async function scanMusicFiles(dir, allFiles = []) {
     })
 
     return allFiles;
+}
+
+function saveFile(saveLocation, song) {
+    return new Promise((resolve, reject) => {
+        if (allowedMimeTypes.indexOf(song.mimetype) < 0) {
+            reject((Error("File Type Not Allowed!!")));
+        }
+        fs.access(`${saveLocation}/${song.name}`, async (err) => {
+            if (err) {
+                await song.mv(`${saveLocation}/${song.name}`);
+                console.log(`${song.name} uploaded.`);
+                resolve(`${saveLocation}/${song.name}`);
+            } else {
+                reject(Error("File with this name already exists."));
+            }
+        });
+    })
+}
+
+async function saveFiles(saveLocation, songs) {
+    try {
+        await fs.mkdir(saveLocation, { recursive: true });
+        if (!songs) {
+            throw (Error("No File Uploaded."));
+        }
+        let saveLocations = [];
+        let promiseArray = songs.data.map((song) => saveFile(saveLocation, song));
+        const results = await Promise.all(promiseArray);
+        results.forEach(location => { saveLocations.push(location); });
+
+        return saveLocations;
+    } catch (error) {
+        throw (error);
+    }
 }
 
 async function deleteFile(fileLocation) {
@@ -65,5 +100,8 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    },
+    uploadFiles: async function (files) {
+        return await saveFiles("D:/Music", files);
     }
 }
