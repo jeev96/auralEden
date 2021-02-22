@@ -10,7 +10,7 @@
 			<div class="d-flex justify-content-center">
 				<div class="col-xl-10" id="moving-player">
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-12 col-md-6">
 							<div class="latest-album-left">
 								<div class="cover-img">
 									<img class="size_174x174" [src]="albumArtUrl" alt="No Image"
@@ -37,7 +37,7 @@
 									</div>
 									<p *ngIf="currentSong">
 										<span>Album</span>: {{ currentSong.common.album }} <br>
-										<span>Artist</span>: {{ currentSong.name.artist }} <br>
+										<span>Artist</span>: {{ currentSong.common.artist }} <br>
 										<span>Genre</span>: {{ currentSong.common.genre }} <br>
 										<span>Bitrate</span>: {{ roundNumber(currentSong.format.bitrate / 1000) }} kbps
 										<br>
@@ -47,7 +47,7 @@
 							</div>
 
 						</div>
-						<div class="col-sm-6">
+						<div class="col-sm-12 col-md-6">
 							<!-- Audio Player -->
 							<div class="player-container latest-album-right">
 								<div class="header_player tab_page">
@@ -60,7 +60,7 @@
 												</h3>
 												<h3 class="track-name" *ngIf="!currentSong">...</h3>
 												<span class="artist-name" *ngIf="currentSong">
-													{{ currentSong.name.artist }}
+													{{ currentSong.common.artist }}
 												</span>
 												<span class="artist-name" *ngIf="!currentSong">...</span>
 											</div>
@@ -78,41 +78,41 @@
 													</div>
 
 													<div
-														class="jp-controls d-flex col-sm-12 align-items-center justify-content-end">
-														<div class="mx-3">
+														class="jp-controls d-flex col-sm-12 align-items-center">
+														<div class="col-sm-2">
 															{{ roundNumber(timeElapsed / 60) + ":" +
 															(roundNumber(timeElapsed % 60) > 9 ?
 															roundNumber(timeElapsed % 60) : "0" +
 															roundNumber(timeElapsed % 60)) }}
 														</div>
-														<button>
+														<button class="col-xs-1">
 															<i class="icon fas fa-random"></i>
 														</button>
-														<button>
+														<button class="col-xs-1">
 															<i class="icon fas fa-redo"></i>
 														</button>
-														<button (click)="stop()">
+														<button (click)="stop()" class="col-xs-1">
 															<i class="icon fas fa-stop"></i>
 														</button>
-														<button (click)="previous()">
+														<button (click)="previous()" class="col-xs-1">
 															<i class="icon fas fa-fast-backward"> </i>
 														</button>
-														<button *ngIf="!playing" class="jp-main" (click)="play()">
+														<button *ngIf="!playing" class="jp-main col-xs-2" (click)="play()">
 															<i class="icon fas fa-play-circle fa-3x"></i>
 														</button>
-														<button *ngIf="playing" class="jp-main" (click)="pause()">
+														<button *ngIf="playing" class="jp-main col-xs-2" (click)="pause()">
 															<i class="icon fas fa-pause-circle fa-3x"></i>
 														</button>
-														<button (click)="next()">
+														<button (click)="next()" class="col-xs-1">
 															<i class="icon fas fa-fast-forward"></i>
 														</button>
-														<button *ngIf="volume > 0" (click)="mute(true)">
+														<button *ngIf="volume > 0" (click)="mute(true)" class="col-xs-1">
 															<i class="icon fas fa-volume-up"></i>
 														</button>
-														<button *ngIf="volume === 0" (click)="mute(false)">
+														<button *ngIf="volume === 0" (click)="mute(false)" class="col-xs-1">
 															<i class="icon fas fa-volume-mute"></i>
 														</button>
-														<div class="slidecontainer mr-4">
+														<div class="slidecontainer col-xs-2">
 															<input type="range" min="0" max="100" [value]="volume"
 																class="slider" id="volume"
 																(input)="changeVolume($event)">
