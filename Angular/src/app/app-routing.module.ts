@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AuthComponent } from './auth/auth.component';
+import { AuthGuard } from './auth/auth.guard';
 import { HomeComponent } from './home/home.component';
 import { LibraryComponent } from './library/library.component';
 import { PlayerComponent } from './player/player.component';
@@ -9,10 +11,12 @@ import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
 	{ path: "", component: HomeComponent, pathMatch: "full" },
+	{ path: "login", component: AuthComponent },
+	{ path: "signup", component: AuthComponent },
 	{ path: "library", component: LibraryComponent },
 	{ path: "playlist", component: PlaylistComponent },
 	{ path: "player", component: PlayerComponent, resolve: [SongResolverService] },
-	{ path: "settings", component: SettingsComponent }
+	{ path: "settings", component: SettingsComponent, canActivate: [AuthGuard]}
 ];
 
 @NgModule({

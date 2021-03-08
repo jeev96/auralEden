@@ -46,6 +46,9 @@ async function saveFiles(saveLocation, songs) {
         if (!songs) {
             throw (Error("No File Uploaded."));
         }
+        if (!songs.data.length) {
+            songs.data = [songs.data];
+        }
         let saveLocations = [];
         let promiseArray = songs.data.map((song) => saveFile(saveLocation, song));
         const results = await Promise.all(promiseArray);

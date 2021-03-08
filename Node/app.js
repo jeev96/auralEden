@@ -6,10 +6,13 @@ const express = require("express"),
     cookieParser = require("cookie-parser"),
     LocalStrategy = require("passport-local"),
     session = require('express-session'),
+    passport = require('passport'),
     fileupload = require("express-fileupload");
 
 // routes
 let indexRoutes = require("./routes/index");
+let authRoutes = require("./routes/auth");
+let devicesRoutes = require("./routes/devices");
 let libraryRoutes = require("./routes/library");
 let songRoutes = require("./routes/song");
 
@@ -35,8 +38,9 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json()); app.set("view engine", "ejs");
 app.use(cors());
 app.use(fileupload());
+app.use(passport.initialize());
 app.use(cookieParser('secret'));
-
+app.set('trust proxy',true);
 
 app.use(function (req, res, next) {
     app.locals.moment = require('moment');
@@ -45,6 +49,8 @@ app.use(function (req, res, next) {
 
 // root route
 app.use("/api", indexRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/devices", devicesRoutes);
 app.use("/api/library", libraryRoutes);
 app.use("/api/song", songRoutes);
 

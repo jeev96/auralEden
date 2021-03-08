@@ -1,0 +1,58 @@
+<section class="page-header" style="background-image: url('/assets/media/background/7.jpg');">
+	<div class="tim-container">
+		<div class="page-header-title text-center">
+			<h3>Get with us</h3>
+			<h2>Contact</h2>
+		</div>
+
+		<div class="breadcrumbs">
+			<a href="#">Home</a>
+			<span>/</span>
+			<span>Contact</span>
+		</div>
+
+	</div>
+	<!-- /.tim-container -->
+</section>
+<!-- /#page-header -->
+
+<!-- Contact bottom area Start -->
+<section class="contuct-bottom section-padding">
+	<div class="container">
+
+		<div class="row justify-content-center mb-4">
+			<div class="col-md-10 col-lg-8">
+				<div class="con-bottom-inner">
+					<h4>{{isLoginMode ? "Login" : "Signup" }}</h4>
+					<div class="per-social">
+						<ul>
+							<li><a href="#"><i class="fas fa-music"></i></a></li>
+							<li><a href="#"><i class="fas fa-drum"></i></a></li>
+							<li><a href="#"><i class="fas fa-guitar"></i></a></li>
+							<li><a href="#"><i class="fas fa-drum-steelpan"></i></a></li>
+							<li><a href="#"><i class="fas fa-headphones"></i></a></li>
+							<li><a href="#"><i class="fas fa-microphone"></i></a></li>
+							<li><a href="#"><i class="fas fa-podcast"></i></a></li>
+							<li><a href="#"><i class="fas fa-sliders-h"></i></a></li>
+						</ul>
+					</div>
+					<p>Please enter your credentials.</p>
+
+					<div class="con-page-form col-sm-12">
+						<div *ngIf="isLoading" style="text-align: center;">
+							<app-loading-spinner></app-loading-spinner>
+						</div>
+						<form [formGroup]="authForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+
+							<input type="text" formControlName="username" placeholder="Username" class="col-sm-6 mx-1 mb-4">
+							<input type="password" formControlName="password" placeholder="Password" class="col-sm-6 mx-1 mb-4">
+
+							<button class="btn btn-success col-sm-4" type="submit"
+								[disabled]="!authForm.valid">Submit</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

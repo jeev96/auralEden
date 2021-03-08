@@ -36,7 +36,8 @@ export function libraryReducer(state = initialState, action: LibraryActions.Libr
 					recordsTotal: 0
 				},
 				count: 0,
-				loading: true
+				loading: true,
+				error: null
 			}
 		case LibraryActions.GET_LIBRARY_DATA_ERROR:
 			return {

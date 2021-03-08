@@ -1,10 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { StoreModule } from '@ngrx/store';
-import { HttpClientModule, } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EffectsModule } from '@ngrx/effects';
-
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -24,6 +23,9 @@ import { LibraryEffects } from './library/store/library.effects';
 import { PlayerEffects } from './player/store/player.effects';
 import { DataTablesModule } from 'angular-datatables';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { AuthComponent } from './auth/auth.component';
+import { AuthEffects } from './auth/store/auth.effects';
+import { AuthInterceptorService } from './auth/auth-interceptor.service';
 
 
 @NgModule({
@@ -37,7 +39,8 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 		PlayerComponent,
 		PlayerMiniComponent,
 		SettingsComponent,
-		LoadingSpinnerComponent
+		LoadingSpinnerComponent,
+		AuthComponent
 	],
 	imports: [
 		BrowserModule,
@@ -49,9 +52,15 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 		DataTablesModule,
 		NgxDropzoneModule,
 		StoreModule.forRoot(fromApp.appReducer),
-		EffectsModule.forRoot([SettingsEffects, LibraryEffects, PlayerEffects])
+		EffectsModule.forRoot([AuthEffects, SettingsEffects, LibraryEffects, PlayerEffects])
 	],
-	providers: [],
+	providers: [
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: AuthInterceptorService,
+			multi: true
+		}
+	],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }

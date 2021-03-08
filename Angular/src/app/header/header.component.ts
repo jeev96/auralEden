@@ -1,36 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+
+import * as fromApp from "../store/app.reducer";
+import * as AuthActions from "../auth/store/auth.actions";
 
 @Component({
 	selector: 'app-header',
 	templateUrl: './header.component.html',
 	styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
-	constructor() { }
+export class HeaderComponent implements OnInit, OnDestroy {
+	constructor(private store: Store<fromApp.AppState>) { }
+
+	private storeSub: Subscription;
+
+	isLoggedIn = false;
+	devices = [];
 
 	ngOnInit() {
+		this.storeSub = this.store.select("auth").subscribe(authState => {
+			this.isLoggedIn = !!authState.user;
+			if (authState.user && authState.user.devices) {
+				this.devices = authState.user.devices;
+			} else {
+				this.devices = [];
+			}
+		});
+	}
 
-	// 	$('[data-bg-image]').each(function () {
-	// 		var img = $(this).data('bg-image');
-	// 		$(this).css({
-	// 			backgroundImage: 'url(' + img + ')',
-	// 		});
-	// 	});
+	ngOnDestroy() {
+		this.storeSub.unsubscribe();
+	}
 
-	// 	//Parallax Background
-	// 	$('[data-parallax="image"]').each(function () {
-
-	// 		var actualHeight = $(this).position().top;
-	// 		var speed = $(this).data('parallax-speed');
-	// 		var reSize = actualHeight - $(window).scrollTop();
-	// 		var makeParallax = -(reSize / 2);
-	// 		var posValue = makeParallax + "px";
-
-	// 		$(this).css({
-	// 			backgroundPosition: '50% ' + posValue,
-	// 		});
-	// 	});
-	// },
+	logout() {
+		this.store.dispatch(new AuthActions.LogoutRequest());
 	}
 
 }

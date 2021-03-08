@@ -946,8 +946,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .user-login li.cart-count .cart-overview .cart-item .product-thumbnail {
-	margin-right: 1.3em;
-	float: left;
 	padding: 0 !important;
 	display: inline-block;
 	width: 70px;
@@ -959,7 +957,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .user-login li.cart-count .cart-overview .cart-item .product-details {
 	position: relative;
-	margin-left: 70px;
 }
 
 .user-login li.cart-count .cart-overview .cart-item .product-details .product-title {
@@ -978,14 +975,12 @@ h1, h2, h3, h4, h5, h6 {
 	position: absolute;
 	right: 0;
 	top: 42%;
-	height: 18px;
-	width: 18px;
+	height: 12px;
+	width: 12px;
 	font-size: 6px;
-	background: #3e3e3e;
 	color: #FFF;
-	border-radius: 50%;
 	text-align: center;
-	line-height: 18px;
+	line-height: 12px;
 	color: #f3f3f3;
 	-webkit-transition: all 0.3s ease-in-out;
 	-o-transition: all 0.3s ease-in-out;
@@ -2054,14 +2049,12 @@ nav#accordian {
 	position: absolute;
 	right: 0;
 	top: 42%;
-	height: 18px;
-	width: 18px;
+	height: 12px;
+	width: 12px;
 	font-size: 6px;
-	background: #3e3e3e;
 	color: #FFF;
-	border-radius: 50%;
 	text-align: center;
-	line-height: 18px;
+	line-height: 12px;
 	color: #f3f3f3;
 	-webkit-transition: all 0.3s ease-in-out;
 	-o-transition: all 0.3s ease-in-out;
@@ -2726,14 +2719,12 @@ nav#accordian {
 	position: absolute;
 	right: 0;
 	top: 42%;
-	height: 18px;
-	width: 18px;
+	height: 12px;
+	width: 12px;
 	font-size: 6px;
-	background: #3e3e3e;
 	color: #FFF;
-	border-radius: 50%;
 	text-align: center;
-	line-height: 18px;
+	line-height: 12px;
 	color: #f3f3f3;
 	-webkit-transition: all 0.3s ease-in-out;
 	-o-transition: all 0.3s ease-in-out;

@@ -43,7 +43,7 @@ export class PlayerEffects {
 	getSongDataRequest$ = createEffect(() =>
 		this.actions$.pipe(ofType(PlayerActions.GET_PLAYER_SONG_REQUEST), switchMap((playerActions: PlayerActions.GetPlayerSongRequest) => {
 			return this.http.get<SongResponseData>(environment.getLibraryDataURL + "/" + playerActions.payload);
-		}), map((response, playerState) => {
+		}), map((response) => {
 			this.setAudioElementSource(environment.streamUrl + response["_id"]);
 			return new PlayerActions.SetCurrentSongData(response);
 		}), concatMap((response) => {

@@ -92,7 +92,7 @@ export class LibraryComponent implements OnInit, OnDestroy {
 						recordsFiltered: response.recordsFiltered,
 						data: [],
 					});
-				}, error => {
+				}, (error) => {
 					this.error = "Unable to Fetch Data. Please Check your Connection!!";
 				});
 			}
