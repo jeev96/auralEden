@@ -4,8 +4,6 @@ const express = require("express"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
     cookieParser = require("cookie-parser"),
-    LocalStrategy = require("passport-local"),
-    session = require('express-session'),
     passport = require('passport'),
     fileupload = require("express-fileupload");
 
@@ -40,7 +38,7 @@ app.use(cors());
 app.use(fileupload());
 app.use(passport.initialize());
 app.use(cookieParser('secret'));
-app.set('trust proxy',true);
+app.set('trust proxy', true);
 
 app.use(function (req, res, next) {
     app.locals.moment = require('moment');
@@ -54,6 +52,19 @@ app.use("/api/devices", devicesRoutes);
 app.use("/api/library", libraryRoutes);
 app.use("/api/song", songRoutes);
 
-app.listen(3000, function () {
+const server = app.listen(3000, function () {
     console.log("The server has started!");
 });
+
+const io = require('socket.io')(server, {
+    cors: {
+        origin: "http://localhost:4200",
+        methods: ["GET", "POST"],
+        transports: ['websocket', 'polling'],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true
+    },
+    allowEIO3: true
+});
+
+const socketService = require("./service/socket")(io);

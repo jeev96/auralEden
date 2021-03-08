@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, NgZone } from "@angular/core";
 import { Router } from "@angular/router";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
+import { Socket } from "ngx-socket-io";
 import { DeviceDetectorService } from "ngx-device-detector";
 import { of } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs/operators";
@@ -85,7 +86,14 @@ const setDeviceId = (deviceId) => {
 
 @Injectable()
 export class AuthEffects {
-	constructor(private actions$: Actions, private http: HttpClient, private router: Router, private authService: AuthService, private deviceService: DeviceDetectorService) { }
+	constructor(
+		private actions$: Actions,
+		private http: HttpClient,
+		private socket: Socket,
+		private router: Router,
+		private authService: AuthService,
+		private deviceService: DeviceDetectorService
+	) { }
 
 	autoLogin$ = createEffect(() =>
 		this.actions$.pipe(ofType(AuthActions.AUTO_LOGIN), switchMap((authActions: AuthActions.AutoLogin) => {
@@ -103,8 +111,6 @@ export class AuthEffects {
 				}).pipe(map((response) => {
 					const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
 					this.authService.setLogoutTimer(expirationDuration);
-
-					console.log(response.devices);
 
 					return new AuthActions.AuthenticateSuccess({
 						id: loadedUser.id,
@@ -166,6 +172,7 @@ export class AuthEffects {
 
 	authRedirect$ = createEffect(() =>
 		this.actions$.pipe(ofType(AuthActions.AUTHENTICATE_SUCCESS), tap((authSuccessAction: AuthActions.AuthenticateSuccess) => {
+			this.socket.emit('login', { username: getUserData().username });
 			if (authSuccessAction.payload.redirect) {
 				this.router.navigate(["/"]);
 			}
@@ -189,6 +196,7 @@ export class AuthEffects {
 
 	authLogout$ = createEffect(() =>
 		this.actions$.pipe(ofType(AuthActions.LOGOUT), tap(() => {
+			this.socket.emit('logout', { username: getUserData().username });
 			this.authService.clearLogoutTimer();
 			localStorage.removeItem("userData");
 			this.router.navigate(["/"]);

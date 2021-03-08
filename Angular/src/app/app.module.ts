@@ -26,7 +26,10 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { AuthComponent } from './auth/auth.component';
 import { AuthEffects } from './auth/store/auth.effects';
 import { AuthInterceptorService } from './auth/auth-interceptor.service';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+import { environment } from 'src/environments/environment';
 
+const config: SocketIoConfig = { url: environment.socketUrl, options: {} };
 
 @NgModule({
 	declarations: [
@@ -48,6 +51,7 @@ import { AuthInterceptorService } from './auth/auth-interceptor.service';
 		HttpClientModule,
 		FormsModule,
 		ReactiveFormsModule,
+		SocketIoModule.forRoot(config),
 		CommonModule,
 		DataTablesModule,
 		NgxDropzoneModule,

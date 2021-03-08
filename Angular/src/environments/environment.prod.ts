@@ -1,5 +1,7 @@
 export const environment = {
 	production: true,
+	socketUrl: "http://192.168.1.10:3000",
+
 	setMediaLocationUrl: "http://192.168.1.10:3000/api/settings",
 
 	getLibraryDataURL: "http://192.168.1.10:3000/api/library",
