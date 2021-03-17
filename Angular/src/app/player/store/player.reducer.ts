@@ -28,17 +28,49 @@ const initialState: State = {
 
 export function playerReducer(state = initialState, action: PlayerActions.PlayerActions) {
 	switch (action.type) {
-		case PlayerActions.GET_PLAYER_SONG_REQUEST:
+		case PlayerActions.CLEAR_PLAYER:
 			return {
 				...state,
+				playlist: [],
 				currentSong: null,
+				duration: 100,
 				timeElapsed: 0,
+				volume: 1,
 				playing: false,
 				paused: false,
 				stopped: true,
-				loading: true,
+				loading: false,
+				error: null
 			}
-		case PlayerActions.GET_PLAYER_SONG_ERROR:
+		case PlayerActions.PLAYER_DATA:
+			return {
+				...state,
+				playlist: action.payload.playlist,
+				currentSong: action.payload.currentSong,
+				duration: action.payload.duration,
+				timeElapsed: action.payload.timeElapsed,
+				volume: action.payload.volume,
+				playing: false,
+				paused: false,
+				stopped: true,
+				loading: false,
+				error: null
+			}
+		case PlayerActions.PLAYER_REMOTE_DATA:
+			return {
+				...state,
+				playlist: action.payload.playlist,
+				currentSong: action.payload.currentSong,
+				duration: action.payload.duration,
+				timeElapsed: action.payload.timeElapsed,
+				volume: action.payload.volume,
+				playing: action.payload.playing,
+				paused: action.payload.paused,
+				stopped: action.payload.stopped,
+				loading: action.payload.loading,
+				error: action.payload.error
+			}
+		case PlayerActions.PLAYER_ERROR:
 			return {
 				...state,
 				currentSong: null,
@@ -49,7 +81,17 @@ export function playerReducer(state = initialState, action: PlayerActions.Player
 				loading: false,
 				error: action.payload
 			}
-		case PlayerActions.SET_CURRENT_SONG_DATA:
+		case PlayerActions.CURRENT_SONG_REQUEST:
+			return {
+				...state,
+				currentSong: null,
+				timeElapsed: 0,
+				playing: false,
+				paused: false,
+				stopped: true,
+				loading: true,
+			}
+		case PlayerActions.CURRENT_SONG:
 			return {
 				...state,
 				currentSong: action.payload,
@@ -58,16 +100,6 @@ export function playerReducer(state = initialState, action: PlayerActions.Player
 				paused: false,
 				stopped: false,
 				loading: false,
-			}
-		case PlayerActions.CLEAR_PLAYER_PLAYLIST:
-			return {
-				...state,
-				playlist: [],
-				timeElapsed: 0,
-				currentSong: null,
-				playing: false,
-				paused: false,
-				stopped: true,
 			}
 		case PlayerActions.ADD_PLAYLIST_SONG:
 			return {
@@ -81,36 +113,31 @@ export function playerReducer(state = initialState, action: PlayerActions.Player
 					return song[0] !== action.payload;
 				})
 			}
-		case PlayerActions.CLEAR_PLAYER:
+		case PlayerActions.CLEAR_PLAYLIST:
 			return {
 				...state,
 				playlist: [],
-				audioStream: null,
-				currentSong: null,
-				duration: 100,
 				timeElapsed: 0,
-				volume: 1,
+				currentSong: null,
 				playing: false,
 				paused: false,
 				stopped: true,
-				loading: false,
-				error: null
 			}
-		case PlayerActions.PLAYER_PLAY_SONG:
+		case PlayerActions.PLAY_SONG:
 			return {
 				...state,
 				playing: true,
 				paused: false,
 				stopped: false,
 			}
-		case PlayerActions.PLAYER_PAUSE_SONG:
+		case PlayerActions.PAUSE_SONG:
 			return {
 				...state,
 				playing: false,
 				paused: true,
 				stopped: false,
 			}
-		case PlayerActions.PLAYER_STOP_SONG:
+		case PlayerActions.STOP_SONG:
 			return {
 				...state,
 				playing: false,

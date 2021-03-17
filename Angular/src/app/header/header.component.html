@@ -38,8 +38,9 @@
 					</a>
 
 					<ul class="custom-content cart-overview">
-						<li class="cart-item clearfix d-flex justify-content-between align-items-center" *ngFor="let device of devices">
-							<a class="product-thumbnail col-sm-3">
+						<li class="cart-item clearfix d-flex justify-content-between align-items-center"
+							*ngFor="let device of devices">
+							<a class="product-thumbnail text-center col-sm-3" [ngClass]="isSelectedDevice(device._id) ? 'selected-device' : ''" (click)="selectDevice(device._id)">
 								<i *ngIf="device.deviceType === 'desktop'" class="icon fab fa-windows fa-4x"></i>
 								<i *ngIf="device.deviceType === 'mobile'" class="icon fab fa-android fa-4x"></i>
 							</a>
@@ -47,7 +48,7 @@
 								<a href="single-product.html" class="product-title">{{ device.name }}</a>
 								<span class="product-quantity">{{ device.deviceType }}</span>
 							</div>
-							<div class="col-sm-2">
+							<div class="col-sm-2" (click)="playOnDevice(device._id)">
 								<i *ngIf="device.active === false" class="icon fas fa-plug fa-2x"></i>
 								<i *ngIf="device.active === true" class="icon fas fa-volume-up fa-2x"></i>
 							</div>

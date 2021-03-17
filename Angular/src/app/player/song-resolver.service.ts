@@ -20,8 +20,8 @@ export class SongResolverService implements Resolve<any> {
 				this.store.dispatch(new PlayerActions.ClearPlayer());
 				return of(playerState)
 			} else if (playerState.currentSong == null && playerState.playlist.length > 0) {
-				this.store.dispatch(new PlayerActions.GetPlayerSongRequest(playerState.playlist[0][0]));
-				return this.actions$.pipe(ofType(PlayerActions.SET_CURRENT_SONG_DATA), take(1));
+				this.store.dispatch(new PlayerActions.CurrentSongRequest(playerState.playlist[0][0]));
+				return this.actions$.pipe(ofType(PlayerActions.CURRENT_SONG), take(1));
 			}
 			else {
 				return of(playerState);

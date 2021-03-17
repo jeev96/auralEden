@@ -43,8 +43,8 @@ module.exports = {
                 devices: [{
                     name: userData.device.name,
                     deviceType: userData.device.type,
-                    active: true,
-                    online: true
+                    active: false,
+                    online: false
                 }]
             });
             return await newUser.save();
@@ -65,7 +65,16 @@ module.exports = {
         try {
             return await User.updateOne(query, { $set: newData })
         } catch (error) {
-
+            console.log(error.message);
+            throw (error);
+        }
+    },
+    updateMany: async function (query, newData) {
+        try {
+            return await User.updateMany(query, { $set: newData }, { multi: true });
+        } catch (error) {
+            console.log(error.message);
+            throw (error);
         }
     },
     delete: async function (query) {

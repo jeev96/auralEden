@@ -5,23 +5,26 @@ export interface State {
 	user: User;
 	authError: string;
 	loading: boolean;
+	selectedDevice: string;
 }
 
 const initialState: State = {
 	user: null,
 	authError: null,
-	loading: false
+	loading: false,
+	selectedDevice: null
 }
 
 export function authReducer(state = initialState, action: AuthActions.AuthActions) {
 	switch (action.type) {
 		case AuthActions.AUTHENTICATE_SUCCESS:
-			const user = new User(action.payload.id, action.payload.deviceId, action.payload.username, action.payload.token, action.payload.tokenExpirationDate, action.payload.devices);
+			const user = new User(action.payload.id, action.payload.deviceId, action.payload.username, action.payload.token, action.payload.tokenExpirationDate);
 			return {
 				...state,
 				user: user,
 				authError: null,
-				loading: false
+				loading: false,
+				selectedDevice: user.deviceId
 			}
 		case AuthActions.LOGIN_START:
 		case AuthActions.SIGNUP_START:
@@ -35,7 +38,8 @@ export function authReducer(state = initialState, action: AuthActions.AuthAction
 				...state,
 				user: null,
 				authError: action.payload,
-				loading: false
+				loading: false,
+				selectedDevice: null
 			}
 		case AuthActions.CLEAR_ERROR:
 			return {
@@ -45,7 +49,13 @@ export function authReducer(state = initialState, action: AuthActions.AuthAction
 		case AuthActions.LOGOUT:
 			return {
 				...state,
-				user: null
+				user: null,
+				selectedDevice: null
+			}
+		case AuthActions.DEVICE_CHANGE:
+			return {
+				...state,
+				selectedDevice: action.payload
 			}
 		case AuthActions.NOOP_ACTION:
 		default: return state;

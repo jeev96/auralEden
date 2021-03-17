@@ -13,20 +13,13 @@ import * as AuthActions from "./auth.actions";
 
 export interface AuthResponseData {
 	id: string,
-	deviceId,
+	deviceId: string,
 	username: string,
 	token: string,
-	expiresIn: string,
-	devices?: [{
-		_id: string
-		name: string,
-		type: string,
-		active: boolean,
-		online: boolean
-	}]
+	expiresIn: string
 }
 
-const handleAuthentication = (id: string, deviceId: string, username: string, devices: any, token: string, expiresIn: number) => {
+const handleAuthentication = (id: string, deviceId: string, username: string, token: string, expiresIn: number) => {
 	const expirationDate = new Date(new Date().getTime() + +expiresIn * 1000);
 
 	const user = new User(id, deviceId, username, token, expirationDate);
@@ -37,7 +30,6 @@ const handleAuthentication = (id: string, deviceId: string, username: string, de
 		id: id,
 		deviceId: deviceId,
 		username: username,
-		devices: devices,
 		token: token,
 		tokenExpirationDate: expirationDate,
 		redirect: true
@@ -115,14 +107,13 @@ export class AuthEffects {
 					return new AuthActions.AuthenticateSuccess({
 						id: loadedUser.id,
 						username: loadedUser.username,
-						deviceId: loadedUser.deviceId,
-						devices: response.devices,
+						deviceId: getDeviceId(),
 						token: loadedUser.token,
 						tokenExpirationDate: new Date(userData._tokenExpirationDate),
 						redirect: false
 					});
 				}), catchError(errorRes => {
-					return handleError(errorRes);
+					return of(new AuthActions.NoopAction());
 				}))
 			}
 			return of(new AuthActions.NoopAction());
@@ -142,7 +133,7 @@ export class AuthEffects {
 			}).pipe(tap(resData => {
 				this.authService.setLogoutTimer(+resData.expiresIn * 1000);
 			}), map(resData => {
-				return handleAuthentication(resData.id, resData.deviceId, resData.username, resData.devices, resData.token, +resData.expiresIn);
+				return handleAuthentication(resData.id, resData.deviceId, resData.username, resData.token, +resData.expiresIn);
 			}), catchError(errorRes => {
 				return handleError(errorRes);
 			}))
@@ -163,7 +154,7 @@ export class AuthEffects {
 			}).pipe(tap(resData => {
 				this.authService.setLogoutTimer(+resData.expiresIn * 1000);
 			}), map(resData => {
-				return handleAuthentication(resData.id, resData.deviceId, resData.username, resData.devices, resData.token, +resData.expiresIn);
+				return handleAuthentication(resData.id, resData.deviceId, resData.username, resData.token, +resData.expiresIn);
 			}), catchError(errorRes => {
 				return handleError(errorRes);
 			}))
@@ -172,34 +163,34 @@ export class AuthEffects {
 
 	authRedirect$ = createEffect(() =>
 		this.actions$.pipe(ofType(AuthActions.AUTHENTICATE_SUCCESS), tap((authSuccessAction: AuthActions.AuthenticateSuccess) => {
-			this.socket.emit('login', { username: getUserData().username });
+			this.socket.emit('deviceOnline', {
+				username: getUserData().username,
+				deviceId: getDeviceId()
+			});
 			if (authSuccessAction.payload.redirect) {
 				this.router.navigate(["/"]);
 			}
 		})), { dispatch: false }
 	);
 
-	authLogoutRequest$ = createEffect(() =>
-		this.actions$.pipe(ofType(AuthActions.LOGOUT_REQUEST), switchMap((authData: AuthActions.LogoutRequest) => {
-			return this.http.post<{ success: string }>(environment.changeDeviceStatus, {
-				username: getUserData().username,
-				deviceId: getDeviceId(),
-				online: false,
-				active: false
-			}).pipe(map(resData => {
-				return new AuthActions.Logout();
-			}), catchError(errorRes => {
-				return handleError(errorRes);
-			}))
-		}))
-	);
-
 	authLogout$ = createEffect(() =>
 		this.actions$.pipe(ofType(AuthActions.LOGOUT), tap(() => {
-			this.socket.emit('logout', { username: getUserData().username });
+			this.socket.emit('deviceOffline', {
+				username: getUserData().username,
+				deviceId: getDeviceId()
+			});
 			this.authService.clearLogoutTimer();
 			localStorage.removeItem("userData");
 			this.router.navigate(["/"]);
+		})), { dispatch: false }
+	);
+
+	authDeviceOffline$ = createEffect(() =>
+		this.actions$.pipe(ofType(AuthActions.DEVICE_OFFLINE), tap(() => {
+			this.socket.emit('deviceOffline', {
+				username: getUserData().username,
+				deviceId: getDeviceId()
+			});
 		})), { dispatch: false }
 	);
 }

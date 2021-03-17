@@ -21,7 +21,6 @@ router.post('/signup', async function (req, res) {
             id: user._id.toString(),
             deviceId: user.devices[0]._id,
             username: user.username,
-            devices: user.devices.filter(device => device.online === true),
             token: "JWT " + token,
             expiresIn: 3600 * 24
         });
@@ -46,16 +45,12 @@ router.post('/signin', async function (req, res) {
 
                 let deviceId = req.body.device.id;
                 let device = user.devices.filter((device) => device._id.toString() === deviceId);
-                if (device.length === 1) {
-                    device = device[0];
-                    device["online"] = true;
-                    user = await user.save();
-                } else {
+                if (device.length === 0) {
                     user.devices.push({
                         name: req.body.device.name,
                         deviceType: req.body.device.type,
                         active: false,
-                        online: true
+                        online: false
                     });
                     user = await user.save();
                     deviceId = user.devices[user.devices.length - 1]._id;
@@ -65,7 +60,6 @@ router.post('/signin', async function (req, res) {
                     id: user._id.toString(),
                     deviceId: deviceId,
                     username: user.username,
-                    devices: user.devices.filter(device => device.online === true),
                     token: "JWT " + token,
                     expiresIn: 3600 * 24
                 });
@@ -84,13 +78,15 @@ router.post("/authenticate", passport.authenticate('jwt', { session: false }), a
         return res.status(403).send({ status: "faliure", error: 'Unauthorized.' });
     }
     try {
-        await devicesService.changeDeviceStatus(req.body.username, req.body.deviceId, true, false);
         const user = await userDbService.findOne({ username: req.body.username });
-        return res.status(200).send({ 
-            devices: user.devices.filter(device => device.online === true), 
+        if (user && user.devices.filter((device) => device._id.toString() === req.body.deviceId).length !== 1) {
+            return res.status(403).send({ status: "faliure", error: 'Unauthorized.' });
+        }
+        return res.status(200).send({
+            status: "success",
         });
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
         return res.status(500).send({
             status: "faliure",
             error: error.message

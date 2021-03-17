@@ -1,5 +1,6 @@
 const express = require("express"),
     app = express(),
+    process = require('process'),
     cors = require('cors'),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
@@ -58,7 +59,7 @@ const server = app.listen(3000, function () {
 
 const io = require('socket.io')(server, {
     cors: {
-        origin: "http://localhost:4200",
+        origin: ["http://localhost:4200", "http://192.168.1.10:4200"],
         methods: ["GET", "POST"],
         transports: ['websocket', 'polling'],
         allowedHeaders: ["my-custom-header"],
@@ -68,3 +69,14 @@ const io = require('socket.io')(server, {
 });
 
 const socketService = require("./service/socket")(io);
+const devicesService = require("./service/devices");
+
+async function test() {
+    try {
+        await devicesService.offlineAllDevices();
+        console.log("All devices offline");
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+// test();

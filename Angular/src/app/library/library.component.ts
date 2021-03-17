@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import * as fromApp from "../store/app.reducer";
 import * as LibraryActions from "./store/library.actions";
 import * as PlayerActions from "../player/store/player.actions";
+import { Socket } from 'ngx-socket-io';
 export class DataTablesResponse {
 	data: any[];
 	draw: number;
@@ -32,19 +33,27 @@ export class LibraryComponent implements OnInit, OnDestroy {
 	currentSongId = null;
 	playing = false;
 	playlistIds = [];
+	selectedDevice = null;
 
 	private storeSub: Subscription;
 	private playerSub: Subscription;
+	private authSub: Subscription;
 
-	constructor(private store: Store<fromApp.AppState>, private http: HttpClient) { }
+	constructor(
+		private store: Store<fromApp.AppState>,
+		private http: HttpClient,
+		private socket: Socket
+	) { }
 
 	ngOnInit(): void {
-		// this.store.dispatch(new LibraryActions.GetLibraryDataRequest());
 		this.storeSub = this.store.select("library").subscribe(libraryData => {
 			this.library = libraryData.library;
 			this.isloading = libraryData.loading;
 			this.count = libraryData.count;
 			this.error = libraryData.error;
+		});
+		this.authSub = this.store.select("auth").subscribe(authData => {
+			this.selectedDevice = authData.selectedDevice;
 		});
 		this.playerSub = this.store.select("player").subscribe(playerData => {
 			if (playerData.currentSong) {
@@ -101,22 +110,59 @@ export class LibraryComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		this.storeSub.unsubscribe();
+		this.authSub.unsubscribe();
 		this.playerSub.unsubscribe();
 	}
 
 	playSong(songId) {
-		this.store.dispatch(new PlayerActions.GetPlayerSongRequest(songId));
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.PLAY_SONG_REQUEST,
+				data: songId
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
+		this.store.dispatch(new PlayerActions.CurrentSongRequest(songId));
 	}
 
 	pauseSong() {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.PAUSE_SONG_REQUEST,
+				data: null
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
 		this.store.dispatch(new PlayerActions.PauseSongRequest());
 	}
 
 	addToPlaylist(song) {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.ADD_PLAYLIST_SONG_REQUEST,
+				data: song
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
 		this.store.dispatch(new PlayerActions.AddPlaylistSongRequest(song));
 	}
 
 	removeFromPlaylist(songId) {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.DELETE_PLAYLIST_SONG_REQUEST,
+				data: songId
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
 		this.store.dispatch(new PlayerActions.DeletePlaylistSongRequest(songId));
 	}
 
@@ -124,5 +170,7 @@ export class LibraryComponent implements OnInit, OnDestroy {
 		return Math.round(val);
 	}
 
-
+	getDeviceId = () => {
+		return localStorage.getItem("deviceId");
+	}
 }

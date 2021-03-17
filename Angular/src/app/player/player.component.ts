@@ -8,6 +8,8 @@ import { environment } from 'src/environments/environment';
 import * as fromApp from "../store/app.reducer";
 import * as PlayerActions from "./store/player.actions";
 import { HttpClient } from '@angular/common/http';
+import { PlayerService } from './player.service';
+import { Socket } from 'ngx-socket-io';
 
 
 @Component({
@@ -16,7 +18,8 @@ import { HttpClient } from '@angular/common/http';
 	styleUrls: ['./player.component.css']
 })
 export class PlayerComponent implements OnInit, OnDestroy {
-	private storeSub: Subscription;
+	private playerSub: Subscription;
+	private authSub: Subscription;
 
 	albumArtUrl = "/assets/media/album/cover.jpg";
 	currentSong: "Add a song to Playlist";
@@ -30,11 +33,20 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	timeElapsed = 0;
 	seekTimer = null;
 	error = null;
+	selectedDevice = null;
 
-	constructor(private store: Store<fromApp.AppState>, private http: HttpClient) { }
+	constructor(
+		private store: Store<fromApp.AppState>,
+		private http: HttpClient,
+		private socket: Socket,
+		private playerService: PlayerService
+	) { }
 
 	ngOnInit(): void {
-		this.storeSub = this.store.select("player").subscribe(playerData => {
+		this.authSub = this.store.select("auth").subscribe(authData => {
+			this.selectedDevice = authData.selectedDevice;
+		});
+		this.playerSub = this.store.select("player").subscribe(playerData => {
 			clearInterval(this.seekTimer);
 			if (playerData.currentSong) {
 				this.albumArtUrl = environment.albumArtUrl + playerData.currentSong["_id"];
@@ -51,16 +63,22 @@ export class PlayerComponent implements OnInit, OnDestroy {
 			this.paused = playerData.paused;
 			this.stopped = playerData.stopped;
 			this.volume = playerData.volume * 100;
-			this.timeElapsed = playerData.timeElapsed;
-			this.error = playerData.error;
-			if (playerData.playing) {
-				this.seekTimer = setInterval(() => this.updateSeekSlider(), 1000);
+			if (this.getDeviceId() !== this.selectedDevice) {
+				this.timeElapsed = playerData.timeElapsed;
+				this.error = playerData.error;
+			} else {
+				this.timeElapsed = this.playerService.getCurrentTime();
+				this.error = playerData.error;
+				if (playerData.playing) {
+					this.seekTimer = setInterval(() => this.updateSeekSlider(), 1000);
+				}
 			}
 		});
 	}
 
 	ngOnDestroy(): void {
-		this.storeSub.unsubscribe();
+		this.playerSub.unsubscribe();
+		this.authSub.unsubscribe();
 		clearInterval(this.seekTimer);
 	}
 
@@ -71,41 +89,122 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	play() {
-		if (!this.playing) {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.PLAY_SONG_REQUEST,
+				data: this.currentSong["_id"]
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
+		else if (!this.playing && this.currentSong) {
 			this.store.dispatch(new PlayerActions.PlaySongRequest(this.currentSong["_id"]));
+			return;
 		}
 	}
-
-	changeCurrentSong(songId) {
-		this.store.dispatch(new PlayerActions.GetPlayerSongRequest(songId));
-	}
-
 	pause() {
-		if (this.playing) {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.PAUSE_SONG_REQUEST,
+				data: null
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
+		else if (this.playing) {
 			this.store.dispatch(new PlayerActions.PauseSongRequest());
 		}
 	}
 
 	stop() {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.STOP_SONG_REQUEST,
+				data: null
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
 		this.store.dispatch(new PlayerActions.StopSongRequest());
 	}
 
+	changeCurrentSong(songId) {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.CURRENT_SONG_REQUEST,
+				data: songId
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
+		this.store.dispatch(new PlayerActions.CurrentSongRequest(songId));
+	}
+
 	next() {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.PLAY_NEXT_SONG_REQUEST,
+				data: null
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
 		this.store.dispatch(new PlayerActions.PlayNextSongRequest());
 	}
 
 	previous() {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.PLAY_PREVIOUS_SONG_REQUEST,
+				data: null
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
 		this.store.dispatch(new PlayerActions.PlayPreviousSongRequest());
 	}
 
 	removeFromPlaylist(songId) {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.DELETE_PLAYLIST_SONG_REQUEST,
+				data: songId
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
 		this.store.dispatch(new PlayerActions.DeletePlaylistSongRequest(songId));
 	}
 
 	mute(mute: boolean) {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.CHANGE_VOLUME_REQUEST,
+				data: mute ? 0 : 0.5
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
 		this.store.dispatch(new PlayerActions.ChangeVolumeRequest(mute ? 0 : 0.5));
 	}
 	changeVolume(event) {
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.CHANGE_VOLUME_REQUEST,
+				data: event.target.value / 100
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
 		this.store.dispatch(new PlayerActions.ChangeVolumeRequest(event.target.value / 100));
 	}
 
@@ -114,7 +213,15 @@ export class PlayerComponent implements OnInit, OnDestroy {
 		if (event.target) {
 			value = event.target.value
 		}
-
+		if (this.getDeviceId() !== this.selectedDevice) {
+			const data = {
+				deviceId: this.selectedDevice,
+				command: PlayerActions.SEEK_TRACK_REQUEST,
+				data: { timeElapsed: +value, manualEntry: isManual }
+			};
+			this.socket.emit("controlDevice", data);
+			return;
+		}
 		this.store.dispatch(new PlayerActions.SeekTrackRequest({ timeElapsed: +value, manualEntry: isManual }));
 	}
 
@@ -146,5 +253,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	formatTime(time: number, format: string = "HH:mm:ss") {
 		const momentTime = time * 1000;
 		return moment.utc(momentTime).format(format);
+	}
+
+	getDeviceId = () => {
+		return localStorage.getItem("deviceId");
 	}
 }

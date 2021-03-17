@@ -15,3 +15,9 @@
   top: 0;
   z-index: 1;
 }
+
+.selected-device {
+	background: cornflowerblue;
+    border-radius: 5px;
+    text-align: center;
+}
