@@ -1,0 +1,109 @@
+<section class="page-header" style="background-image: url('/assets/media/background/7.jpg');">
+	<div class="tim-container">
+		<div class="page-header-title text-center">
+			<h3>Share to your Heart's Content</h3>
+			<h2>Share Zone</h2>
+		</div>
+
+		<div class="breadcrumbs">
+			<a href="#">Home</a>
+			<span>/</span>
+			<span>Sharing</span>
+		</div>
+
+	</div>
+	<!-- /.tim-container -->
+</section>
+<!-- /#page-header -->
+
+<!-- Contact bottom area Start -->
+<section class="contuct-bottom section-padding">
+	<div class="container">
+		<div class="row justify-content-center mb-4">
+			<div class="col-md-10 col-lg-8">
+				<div class="con-bottom-inner">
+					<h4>Sharing</h4>
+					<div class="per-social">
+						<ul>
+							<li><a href="#"><i class="fas fa-music"></i></a></li>
+							<li><a href="#"><i class="fas fa-drum"></i></a></li>
+							<li><a href="#"><i class="fas fa-guitar"></i></a></li>
+							<li><a href="#"><i class="fas fa-drum-steelpan"></i></a></li>
+							<li><a href="#"><i class="fas fa-headphones"></i></a></li>
+							<li><a href="#"><i class="fas fa-microphone"></i></a></li>
+							<li><a href="#"><i class="fas fa-podcast"></i></a></li>
+							<li><a href="#"><i class="fas fa-sliders-h"></i></a></li>
+						</ul>
+					</div>
+					<p>Dummy text of the printing and typesetting industry. Lorem Ipsum has been the </p>
+
+					<div class="con-page-form col-sm-12">
+						<div *ngIf="isShareLoading" style="text-align: center;">
+							<app-loading-spinner></app-loading-spinner>
+						</div>
+						<form [formGroup]="sharingForm" (ngSubmit)="onSubmitShare()" *ngIf="!isShareLoading">
+							<input type="text" formControlName="contentLocation" placeholder="Location"
+								class="mx-1 col-sm-9">
+							<button class="btn btn-primary col-sm-2 my-2" (click)="selectLocation()">Choose</button>
+							<!-- <input class="btn btn-primary col-sm-2 my-2" type="file" (change)="onFolderSelected($event)" webkitdirectory multiple/> -->
+
+							<button class="btn btn-success col-sm-4 my-2" type="submit"
+								[disabled]="!sharingForm.valid">
+								Share <i class="fas fa-share-alt"></i>
+							</button>
+						</form>
+					</div>
+
+					<div class="con-page-form col-sm-12" *ngIf="isShareLinkLoaded">
+						<form >
+							<input type="text" [value]="shareLink" readonly disabled class="mx-1 col-sm-12">
+						</form>
+
+						<button class="btn btn-success col-sm-4 my-2" type="submit" [disabled]="!isShareLinkLoaded">
+							Copy <i class="fas fa-copy"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row justify-content-center mb-4">
+			<div class="col-md-10 col-lg-8">
+				<div class="con-bottom-inner">
+					<h4>Download</h4>
+					<div class="per-social">
+						<ul>
+							<li><a href="#"><i class="fas fa-music"></i></a></li>
+							<li><a href="#"><i class="fas fa-drum"></i></a></li>
+							<li><a href="#"><i class="fas fa-guitar"></i></a></li>
+							<li><a href="#"><i class="fas fa-drum-steelpan"></i></a></li>
+							<li><a href="#"><i class="fas fa-headphones"></i></a></li>
+							<li><a href="#"><i class="fas fa-microphone"></i></a></li>
+							<li><a href="#"><i class="fas fa-podcast"></i></a></li>
+							<li><a href="#"><i class="fas fa-sliders-h"></i></a></li>
+						</ul>
+					</div>
+					<p>Paste url to Download</p>
+
+					<div class="con-page-form col-sm-12">
+						<div *ngIf="isDownloadLoading" style="text-align: center;">
+							<app-loading-spinner></app-loading-spinner>
+						</div>
+						<form [formGroup]="downloadForm" (ngSubmit)="onSubmitDownload()" *ngIf="!isDownloadLoading">
+							<input type="text" formControlName="encryptedCode" placeholder="Encrypted String"
+								class="col-sm-11 m-1">
+							<i class="fas fa-times fa-2x m-3 text-danger"></i>
+							<input type="text" formControlName="saveLocation" placeholder="Save Location"
+								class="col-sm-12 m-1">
+
+							<button class="btn btn-primary col-sm-4 my-2" type="submit"
+								[disabled]="!downloadForm.valid">
+								Download <i class="fas fa-download"></i>
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

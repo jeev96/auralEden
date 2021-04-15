@@ -13,6 +13,7 @@ let indexRoutes = require("./routes/index");
 let authRoutes = require("./routes/auth");
 let devicesRoutes = require("./routes/devices");
 let libraryRoutes = require("./routes/library");
+let sharingRoutes = require("./routes/sharing");
 let songRoutes = require("./routes/song");
 
 // assign mongoose promise library and connect to database
@@ -51,6 +52,7 @@ app.use("/api", indexRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/devices", devicesRoutes);
 app.use("/api/library", libraryRoutes);
+app.use("/api/share", sharingRoutes);
 app.use("/api/song", songRoutes);
 
 const server = app.listen(3000, function () {

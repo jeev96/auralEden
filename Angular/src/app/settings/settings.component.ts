@@ -64,8 +64,6 @@ export class SettingsComponent implements OnInit {
 
 	onSubmit() {
 		const locations = this.settingsForm.value.scanLocations.map(location => location.mediaLocation);
-		console.log(locations);
-
 		this.store.dispatch(new SettingsActions.SetMediaLocationRequest(locations));
 	}
 

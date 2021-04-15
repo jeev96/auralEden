@@ -35,7 +35,7 @@ export class LibraryComponent implements OnInit, OnDestroy {
 	playlistIds = [];
 	selectedDevice = null;
 
-	private storeSub: Subscription;
+	private librarySub: Subscription;
 	private playerSub: Subscription;
 	private authSub: Subscription;
 
@@ -46,7 +46,7 @@ export class LibraryComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit(): void {
-		this.storeSub = this.store.select("library").subscribe(libraryData => {
+		this.librarySub = this.store.select("library").subscribe(libraryData => {
 			this.library = libraryData.library;
 			this.isloading = libraryData.loading;
 			this.count = libraryData.count;
@@ -109,7 +109,7 @@ export class LibraryComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy(): void {
-		this.storeSub.unsubscribe();
+		this.librarySub.unsubscribe();
 		this.authSub.unsubscribe();
 		this.playerSub.unsubscribe();
 	}
