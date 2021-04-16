@@ -25,4 +25,17 @@ export class SharingEffects {
 			return of(new SharingActions.SharingRequestError(error.message));
 		}))
 	);
+
+	downloadStringRequest$ = createEffect(() =>
+		this.actions$.pipe(ofType(SharingActions.DOWNLOAD_STRING_REQUEST), switchMap((sharingAction: SharingActions.DownloadStringRequest) => {
+			return this.http.post<{ status: string }>(environment.downloadContent, {
+				shareString: sharingAction.payload.encryptedString,
+				saveLocation: sharingAction.payload.location
+			});
+		}), map((response) => {
+			return new SharingActions.DownloadString(response.status);
+		}), catchError((error: any) => {
+			return of(new SharingActions.DownloadRequestError(error.message));
+		}))
+	);
 }

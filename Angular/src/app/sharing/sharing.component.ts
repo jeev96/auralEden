@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ClipboardService } from 'ngx-clipboard'
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
@@ -27,7 +28,7 @@ export class SharingComponent implements OnInit, OnDestroy {
 
 	private storeSub: Subscription;
 
-	constructor(private store: Store<fromApp.AppState>) { }
+	constructor(private store: Store<fromApp.AppState>, private clipboardService: ClipboardService) { }
 
 	ngOnInit(): void {
 		this.initForms();
@@ -58,9 +59,14 @@ export class SharingComponent implements OnInit, OnDestroy {
 	}
 
 	onSubmitShare() {
-		console.log(this.sharingForm.value.contentLocation);
-
 		this.store.dispatch(new SharingActions.SharingStringRequest(this.sharingForm.value.contentLocation));
+	}
+
+	onSubmitDownload() {
+		this.store.dispatch(new SharingActions.DownloadStringRequest({
+			encryptedString: this.downloadForm.value.encryptedCode,
+			location: this.downloadForm.value.saveLocation
+		}));
 	}
 
 	selectLocation() {
@@ -68,6 +74,6 @@ export class SharingComponent implements OnInit, OnDestroy {
 	}
 
 	copy() {
-
+		this.clipboardService.copy(this.shareLink);
 	}
 }

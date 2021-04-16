@@ -31,7 +31,7 @@ export class DownloadStringRequest implements Action {
 export class DownloadString implements Action {
 	readonly type = DOWNLOAD_STRING;
 
-	constructor(public payload: { encryptedString: string, location: string }) { }
+	constructor(public payload: string) { }
 }
 
 export class StopSharingRequest implements Action {

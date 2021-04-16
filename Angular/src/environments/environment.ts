@@ -31,7 +31,7 @@ export const environment = {
 
 	// sharing
 	shareContent: "http://192.168.1.10:3000/api/share/share-content",
-	downloadContent: "http://192.168.1.10:3000/api/share/download",
+	downloadContent: "http://192.168.1.10:3000/api/share/download-content",
 };
 
 /*

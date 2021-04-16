@@ -15,6 +15,7 @@ import { SettingsEffects } from './settings/store/settings.effects';
 import { AuthEffects } from './auth/store/auth.effects';
 import { LibraryEffects } from './library/store/library.effects';
 import { PlayerEffects } from './player/store/player.effects';
+import { SharingEffects } from './sharing/store/sharing.effects';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -32,7 +33,7 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinne
 import { DataTablesModule } from 'angular-datatables';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
-import { SharingEffects } from './sharing/store/sharing.effects';
+import { ClipboardModule } from 'ngx-clipboard';
 
 const config: SocketIoConfig = { url: environment.socketUrl, options: {} };
 
@@ -61,6 +62,7 @@ const config: SocketIoConfig = { url: environment.socketUrl, options: {} };
 		CommonModule,
 		DataTablesModule,
 		NgxDropzoneModule,
+		ClipboardModule,
 		StoreModule.forRoot(fromApp.appReducer),
 		EffectsModule.forRoot([AuthEffects, SettingsEffects, LibraryEffects, SharingEffects, PlayerEffects])
 	],

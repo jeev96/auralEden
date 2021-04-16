@@ -5,7 +5,6 @@ const passport = require('passport');
 const passportService = require('../service/passport');
 passportService.setStrategy(passport);
 
-const devicesService = require("../service/devices");
 const userDbService = require("../service/Database/user");
 const config = require("../constants/database");
 

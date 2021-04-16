@@ -59,7 +59,7 @@
 							<input type="text" [value]="shareLink" readonly disabled class="mx-1 col-sm-12">
 						</form>
 
-						<button class="btn btn-success col-sm-4 my-2" type="submit" [disabled]="!isShareLinkLoaded">
+						<button class="btn btn-success col-sm-4 my-2" (click)="copy(sharelink)" [disabled]="!isShareLinkLoaded">
 							Copy <i class="fas fa-copy"></i>
 						</button>
 					</div>
