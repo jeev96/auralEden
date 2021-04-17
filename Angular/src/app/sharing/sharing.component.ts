@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs';
 
 import * as fromApp from "../store/app.reducer";
 import * as SharingActions from "./store/sharing.actions";
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-sharing',
@@ -24,11 +26,18 @@ export class SharingComponent implements OnInit, OnDestroy {
 	isDownloadLinkLoaded = false;
 	downloadError = null;
 
-	shareLink = null;
+	isDeleting = null;
+
+	shareData = [];
+	downloadData = [];
 
 	private storeSub: Subscription;
 
-	constructor(private store: Store<fromApp.AppState>, private clipboardService: ClipboardService) { }
+	constructor(
+		private store: Store<fromApp.AppState>,
+		private clipboardService: ClipboardService,
+		private http: HttpClient
+	) { }
 
 	ngOnInit(): void {
 		this.initForms();
@@ -39,8 +48,10 @@ export class SharingComponent implements OnInit, OnDestroy {
 			this.isDownloadLinkLoaded = sharingData.isDownloading;
 			this.shareError = sharingData.shareError;
 			this.downloadError = sharingData.downloadError;
+			this.shareData = sharingData.shareData;
+			this.downloadData = sharingData.downloadData;
 
-			this.shareLink = sharingData.shareString;
+			this.isDeleting = null;
 		});
 	}
 	ngOnDestroy() {
@@ -58,12 +69,22 @@ export class SharingComponent implements OnInit, OnDestroy {
 
 	}
 
+	prettyBytes(num) {
+		let exponent, unit, neg = num < 0, units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+		if (neg) num = -num
+		if (num < 1) return (neg ? '-' : '') + num + ' B'
+		exponent = Math.min(Math.floor(Math.log(num) / Math.log(1024)), units.length - 1)
+		num = Number((num / Math.pow(1024, exponent)).toFixed(2))
+		unit = units[exponent]
+		return (neg ? '-' : '') + num + ' ' + unit
+	}
+
 	onSubmitShare() {
-		this.store.dispatch(new SharingActions.SharingStringRequest(this.sharingForm.value.contentLocation));
+		this.store.dispatch(new SharingActions.StartSharingRequest(this.sharingForm.value.contentLocation));
 	}
 
 	onSubmitDownload() {
-		this.store.dispatch(new SharingActions.DownloadStringRequest({
+		this.store.dispatch(new SharingActions.StartDownloadRequest({
 			encryptedString: this.downloadForm.value.encryptedCode,
 			location: this.downloadForm.value.saveLocation
 		}));
@@ -73,7 +94,22 @@ export class SharingComponent implements OnInit, OnDestroy {
 
 	}
 
-	copy() {
-		this.clipboardService.copy(this.shareLink);
+	stopClient(torrentId) {
+		this.isDeleting = torrentId;
+		this.store.dispatch(new SharingActions.StopSharingRequest(torrentId));
+	}
+
+	copy(link) {
+		this.clipboardService.copy(link);
+	}
+
+	getStats(torrentId) {
+		console.log(torrentId);
+
+		this.http.post(environment.getTorrentStats, { torrentId: torrentId, isUpload: false }).subscribe((res) => {
+			console.log(res);
+		}, error => {
+			console.log(error);
+		})
 	}
 }

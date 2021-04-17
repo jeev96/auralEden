@@ -45,23 +45,32 @@
 							<input type="text" formControlName="contentLocation" placeholder="Location"
 								class="mx-1 col-sm-9">
 							<button class="btn btn-primary col-sm-2 my-2" (click)="selectLocation()">Choose</button>
-							<!-- <input class="btn btn-primary col-sm-2 my-2" type="file" (change)="onFolderSelected($event)" webkitdirectory multiple/> -->
 
-							<button class="btn btn-success col-sm-4 my-2" type="submit"
-								[disabled]="!sharingForm.valid">
+							<button class="btn btn-success col-sm-4 my-2" type="submit" [disabled]="!sharingForm.valid">
 								Share <i class="fas fa-share-alt"></i>
 							</button>
 						</form>
 					</div>
 
-					<div class="con-page-form col-sm-12" *ngIf="isShareLinkLoaded">
-						<form >
-							<input type="text" [value]="shareLink" readonly disabled class="mx-1 col-sm-12">
+					<div class="con-page-form col-sm-12" *ngIf="shareData.length > 0">
+						<form *ngFor="let shareElement of shareData" class="my-1">
+							<div *ngIf="shareElement.torrentId !== isDeleting">
+								<input type="text" [value]="shareElement.name" readonly disabled class="mx-1 col-sm-4">
+								<input type="text" [value]="shareElement.shareString" readonly disabled
+									class="mx-1 col-sm-4">
+								<button class="btn btn-success col-sm-2 my-2" (click)="copy(shareElement.shareString)"
+									[disabled]="shareElement.shareString.length === 0">
+									Copy <i class="fas fa-copy"></i>
+								</button>
+								<button class="btn btn-danger col-sm-1 m-2"
+									(click)="stopClient(shareElement.torrentId)">
+									<i class="fas fa-times"></i>
+								</button>
+							</div>
+							<div *ngIf="shareElement.torrentId === isDeleting" style="text-align: center;">
+								<app-loading-spinner></app-loading-spinner>
+							</div>
 						</form>
-
-						<button class="btn btn-success col-sm-4 my-2" (click)="copy(sharelink)" [disabled]="!isShareLinkLoaded">
-							Copy <i class="fas fa-copy"></i>
-						</button>
 					</div>
 				</div>
 			</div>
@@ -91,15 +100,39 @@
 						</div>
 						<form [formGroup]="downloadForm" (ngSubmit)="onSubmitDownload()" *ngIf="!isDownloadLoading">
 							<input type="text" formControlName="encryptedCode" placeholder="Encrypted String"
-								class="col-sm-11 m-1">
-							<i class="fas fa-times fa-2x m-3 text-danger"></i>
+								class="col-sm-6">
 							<input type="text" formControlName="saveLocation" placeholder="Save Location"
-								class="col-sm-12 m-1">
+								class="col-sm-5 mx-1">
 
 							<button class="btn btn-primary col-sm-4 my-2" type="submit"
 								[disabled]="!downloadForm.valid">
 								Download <i class="fas fa-download"></i>
 							</button>
+						</form>
+					</div>
+					<div class="con-page-form col-sm-12" *ngIf="downloadData.length > 0">
+						<form *ngFor="let downloadElement of downloadData;" class="my-1">
+							<div *ngIf="downloadElement.torrentId !== isDeleting">
+								<input type="text" [value]="downloadElement.name" readonly disabled
+									class="mx-1 col-sm-4">
+								<input type="text" [value]="prettyBytes(downloadElement.size)" readonly disabled
+									class="mx-1 col-sm-2">
+								<button class="btn btn-success col-sm-1 m-2" (click)="copy(downloadElement.torrentId)">
+									<i class="fas fa-copy"></i>
+								</button>
+								<button class="btn btn-primary col-sm-1 m-2" (click)="getStats(downloadElement.torrentId)">
+									<i class="fas fa-info-circle"></i>
+								</button>
+								<button class="btn btn-primary col-sm-1 m-2" (click)="copy()">
+									<i class="fas fa-stop"></i>
+								</button>
+								<button class="btn btn-danger col-sm-1 m-2">
+									<i class="fas fa-times"></i>
+								</button>
+							</div>
+							<div *ngIf="downloadElement.torrentId === isDeleting" style="text-align: center;">
+								<app-loading-spinner></app-loading-spinner>
+							</div>
 						</form>
 					</div>
 				</div>

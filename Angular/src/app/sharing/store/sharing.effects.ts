@@ -14,26 +14,38 @@ import * as SharingActions from "./sharing.actions";
 export class SharingEffects {
 	constructor(private actions$: Actions, private http: HttpClient, private store: Store<fromApp.AppState>) { }
 
-	sharingStringRequest$ = createEffect(() =>
-		this.actions$.pipe(ofType(SharingActions.SHARING_STRING_REQUEST), switchMap((sharingAction: SharingActions.SharingStringRequest) => {
-			return this.http.post<{ shareString: string }>(environment.shareContent, {
+	startSharingRequest$ = createEffect(() =>
+		this.actions$.pipe(ofType(SharingActions.START_SHARING_REQUEST), switchMap((sharingAction: SharingActions.StartSharingRequest) => {
+			return this.http.post<{ shareString: string, torrentId: string, name: string }>(environment.shareContent, {
 				path: sharingAction.payload
 			});
 		}), map((response) => {
-			return new SharingActions.SharingString(response.shareString);
+			return new SharingActions.StartSharing(response);
 		}), catchError((error: any) => {
 			return of(new SharingActions.SharingRequestError(error.message));
 		}))
 	);
 
-	downloadStringRequest$ = createEffect(() =>
-		this.actions$.pipe(ofType(SharingActions.DOWNLOAD_STRING_REQUEST), switchMap((sharingAction: SharingActions.DownloadStringRequest) => {
-			return this.http.post<{ status: string }>(environment.downloadContent, {
+	stopSharingRequest$ = createEffect(() =>
+		this.actions$.pipe(ofType(SharingActions.STOP_SHARING_REQUEST), switchMap((sharingAction: SharingActions.StopSharingRequest) => {
+			return this.http.post<{ torrentId: string }>(environment.stopShareTorrent, {
+				torrentId: sharingAction.payload
+			});
+		}), map((response) => {
+			return new SharingActions.StopSharing(response.torrentId);
+		}), catchError((error: any) => {
+			return of(new SharingActions.SharingRequestError(error.message));
+		}))
+	);
+
+	startDownloadRequest$ = createEffect(() =>
+		this.actions$.pipe(ofType(SharingActions.START_DOWNLOAD_REQUEST), switchMap((sharingAction: SharingActions.StartDownloadRequest) => {
+			return this.http.post<{ name: string, torrentId: string, size: string }>(environment.downloadContent, {
 				shareString: sharingAction.payload.encryptedString,
 				saveLocation: sharingAction.payload.location
 			});
 		}), map((response) => {
-			return new SharingActions.DownloadString(response.status);
+			return new SharingActions.StartDownload(response);
 		}), catchError((error: any) => {
 			return of(new SharingActions.DownloadRequestError(error.message));
 		}))
