@@ -8,6 +8,7 @@ import { PlayerComponent } from './player/player.component';
 import { SongResolverService } from './player/song-resolver.service';
 import { PlaylistComponent } from './playlist/playlist.component';
 import { SettingsComponent } from './settings/settings.component';
+import { SharingResolverService } from './sharing/sharing-resolver.service';
 import { SharingComponent } from './sharing/sharing.component';
 
 const routes: Routes = [
@@ -16,7 +17,7 @@ const routes: Routes = [
 	{ path: "signup", component: AuthComponent },
 	{ path: "library", component: LibraryComponent },
 	{ path: "playlist", component: PlaylistComponent },
-	{ path: "sharing", component: SharingComponent },
+	{ path: "sharing", component: SharingComponent, resolve: [SharingResolverService] },
 	{ path: "player", component: PlayerComponent, resolve: [SongResolverService] },
 	{ path: "settings", component: SettingsComponent, canActivate: [AuthGuard]}
 ];

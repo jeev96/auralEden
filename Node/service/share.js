@@ -10,7 +10,15 @@ function createShareClient(contentPath) {
             if (!fs.existsSync(contentPath)) {
                 return reject(new Error("Path does not Exist!"));
             }
-            clientUpload.seed(contentPath, function (torrent) {
+            console.log("Starting Seeder.....");
+            clientUpload.seed(contentPath, {
+                announce: [
+                    "http://110.225.244.39:20997/announce",
+                    "http://49.36.155.220:20997/announce",
+                    "udp://110.225.244.39:20997/",
+                    "udp://49.36.155.220:20997/",
+                ]
+            }, function (torrent) {
                 torrent.on("seed", function (params) {
                     console.log("Seeding Now....");
                 })
@@ -23,27 +31,20 @@ function createShareClient(contentPath) {
                 })
                 console.log("seeders: " + clientUpload.torrents.length);
                 return resolve({
-                    shareString: torrent.magnetURI,
+                    name: torrent.name,
                     torrentId: torrent.infoHash,
-                    name: torrent.name
+                    downloaded: torrent.downloaded,
+                    uploaded: torrent.uploaded,
+                    upSpeed: torrent.uploadSpeed,
+                    downSpeed: torrent.downloadSpeed,
+                    completed: torrent.progress,
+                    size: torrent.length,
+                    shareString: torrent.magnetURI,
                 });
             })
         } catch (error) {
             return reject(error);
         }
-    })
-}
-
-function deleteShareTorrent(torrentId) {
-    return new Promise((resolve, reject) => {
-        let torrent = clientUpload.get(torrentId);
-        if (torrent == null) {
-            reject(new Error("No such torrent Exists"));
-        }
-        torrent.destroy((id) => {
-            console.log("Torrent destoryed!!");
-            resolve(torrentId);
-        });
     })
 }
 
@@ -53,11 +54,9 @@ function createDownloadClient(shareString, saveLocation) {
             if (!fs.existsSync(saveLocation)) {
                 return reject(new Error("Save location does not Exist!"));
             }
-            console.log(saveLocation);
-            let interval = null;
+            console.log("Starting Download...");
 
             clientDownload.add(shareString, { path: saveLocation }, function (torrent) {
-                interval = setInterval(onProgress, 2000);
                 console.log('Client is downloading:', torrent.infoHash)
 
                 torrent.on('done', function () {
@@ -65,7 +64,6 @@ function createDownloadClient(shareString, saveLocation) {
                     console.log('Torrent Download finished');
                     torrent.destroy((id) => {
                         console.log("Torrent destoryed!!");
-                        resolve(torrentId);
                     });
                 })
                 torrent.on("error", function (err) {
@@ -75,14 +73,16 @@ function createDownloadClient(shareString, saveLocation) {
                 torrent.on('warning', function (warning) {
                     console.log("Warning: " + warning);
                 })
-                function onProgress() {
-                    console.log("speeds: " + prettyBytes(torrent.downloadSpeed) + ", ")
-                    console.log(prettyBytes(torrent.uploadSpeed) + ", " + torrent.progress);
-                }
                 resolve({
                     name: torrent.name,
                     torrentId: torrent.infoHash,
-                    size: torrent.length
+                    downloaded: torrent.downloaded,
+                    uploaded: torrent.uploaded,
+                    upSpeed: torrent.uploadSpeed,
+                    downSpeed: torrent.downloadSpeed,
+                    completed: torrent.progress,
+                    size: torrent.length,
+                    shareString: torrent.magnetURI,
                 });
             })
         } catch (error) {
@@ -92,27 +92,20 @@ function createDownloadClient(shareString, saveLocation) {
     })
 }
 
-function deleteDownloadTorrent(torrentId) {
+function deleteTorrent(torrentId, isUpload) {
     return new Promise((resolve, reject) => {
-        let torrent = clientDownload.get(torrentId);
+        let torrent = isUpload ? clientUpload.get(torrentId) : clientDownload.get(torrentId);
         if (torrent == null) {
             reject(new Error("No such torrent Exists"));
         }
         torrent.destroy((id) => {
             console.log("Torrent destoryed!!");
-            resolve(torrentId);
+            resolve({
+                torrentId: torrentId,
+                isUpload: isUpload
+            });
         });
     })
-}
-
-function prettyBytes(num) {
-    let exponent, unit, neg = num < 0, units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-    if (neg) num = -num
-    if (num < 1) return (neg ? '-' : '') + num + ' B'
-    exponent = Math.min(Math.floor(Math.log(num) / Math.log(1024)), units.length - 1)
-    num = Number((num / Math.pow(1024, exponent)).toFixed(2))
-    unit = units[exponent]
-    return (neg ? '-' : '') + num + ' ' + unit
 }
 
 module.exports = {
@@ -125,10 +118,10 @@ module.exports = {
             })
         })
     },
-    stopSeeding: function (torrentId) {
+    stopTorrent: function (torrentId, isUpload) {
         return new Promise((resolve, reject) => {
-            deleteShareTorrent(torrentId).then((torrentId) => {
-                return resolve(torrentId);
+            deleteTorrent(torrentId, isUpload).then((data) => {
+                return resolve(data);
             }).catch((error) => {
                 return reject(error);
             })
@@ -143,28 +136,65 @@ module.exports = {
             })
         })
     },
-    stopDownloading: function (torrentId) {
+    getStats: function (isUpload) {
         return new Promise((resolve, reject) => {
-            deleteDownloadTorrent(torrentId).then((torrentId) => {
-                return resolve(torrentId);
-            }).catch((error) => {
-                return reject(error);
-            })
+            let data = [];
+            const client = isUpload ? clientUpload : clientDownload;
+
+            client.torrents.forEach(torrent => {
+                data.push({
+                    name: torrent.name,
+                    torrentId: torrent.infoHash,
+                    downloaded: torrent.downloaded,
+                    uploaded: torrent.uploaded,
+                    upSpeed: torrent.uploadSpeed,
+                    downSpeed: torrent.downloadSpeed,
+                    completed: torrent.progress,
+                    size: torrent.length,
+                    shareString: torrent.magnetURI,
+                })
+            });
+
+            resolve({
+                torrentData: data,
+                isUpload: isUpload
+            });
         })
     },
-    getStats: function (torrentId, isUpload) {
+    getAllTorrents: function () {
         return new Promise((resolve, reject) => {
-            const torrent = isUpload ? clientUpload.get(torrentId) : clientDownload.get(torrentId);
-            if (torrent == null) {
-                reject(new Error("No such torrent Exists"));
-            }
+            let downloading = [];
+            let uploading = [];
+            clientDownload.torrents.forEach(torrent => {
+                downloading.push({
+                    name: torrent.name,
+                    torrentId: torrent.infoHash,
+                    downloaded: torrent.downloaded,
+                    uploaded: torrent.uploaded,
+                    upSpeed: torrent.uploadSpeed,
+                    downSpeed: torrent.downloadSpeed,
+                    completed: torrent.progress,
+                    size: torrent.length,
+                    shareString: torrent.magnetURI,
+                })
+            });
+            clientUpload.torrents.forEach(torrent => {
+                uploading.push({
+                    name: torrent.name,
+                    torrentId: torrent.infoHash,
+                    downloaded: torrent.downloaded,
+                    uploaded: torrent.uploaded,
+                    upSpeed: torrent.uploadSpeed,
+                    downSpeed: torrent.downloadSpeed,
+                    completed: torrent.progress,
+                    size: torrent.length,
+                    shareString: torrent.magnetURI,
+                })
+            });
+
             resolve({
-                torrentId: torrent.infoHash,
-                downloaded: torrent.downloaded,
-                uploaded: torrent.uploaded,
-                upSpeed: torrent.uploadSpeed,
-                downSpeed: torrent.downloadSpeed,
-                completed: torrent.progress
+                downloading: downloading,
+                uploading: uploading
             });
         })
     }

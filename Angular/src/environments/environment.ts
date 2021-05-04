@@ -31,10 +31,10 @@ export const environment = {
 
 	// sharing
 	shareContent: "http://192.168.1.10:3000/api/share/share-content",
-	stopShareTorrent: "http://192.168.1.10:3000/api/share/stop-share-torrent",
 	downloadContent: "http://192.168.1.10:3000/api/share/download-content",
-	stopDownloadTorrent: "http://192.168.1.10:3000/api/share/stop-download-torrent",
+	stopTorrent: "http://192.168.1.10:3000/api/share/stop-torrent",
 	getTorrentStats: "http://192.168.1.10:3000/api/share/stats",
+	allTorrents: "http://192.168.1.10:3000/api/share/all-torrents",
 };
 
 /*

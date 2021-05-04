@@ -1,8 +1,15 @@
 import * as SharingActions from "./sharing.actions";
 
-interface ShareData {
+interface TorrentData {
+	name: string,
+	torrentId: string,
+	downloaded: string,
+	uploaded: string,
+	upSpeed: string,
+	downSpeed: string,
+	completed: string,
+	size: string,
 	shareString: string,
-	torrentId: string
 }
 
 export interface State {
@@ -44,15 +51,6 @@ export function sharingReducer(state = initialState, action: SharingActions.Shar
 				shareData: [...state.shareData, action.payload],
 				shareError: null
 			}
-		case SharingActions.STOP_SHARING:
-			return {
-				...state,
-				shareLoading: false,
-				shareData: state.shareData.filter((shareData) => {
-					return shareData.torrentId !== action.payload;
-				}),
-				shareError: null
-			}
 		case SharingActions.SHARING_REQUEST_ERROR:
 			return {
 				...state,
@@ -75,13 +73,16 @@ export function sharingReducer(state = initialState, action: SharingActions.Shar
 				downloadData: [...state.downloadData, action.payload],
 				downloadError: null
 			}
-		case SharingActions.STOP_DOWNLOAD:
+		case SharingActions.STOP_TORRENT:
 			return {
 				...state,
 				downloadLoading: false,
-				downloadData: state.downloadData.filter((downloadData) => {
-					return downloadData.torrentId !== action.payload;
-				}),
+				downloadData: !action.payload.isUpload ? state.downloadData.filter((downloadData) => {
+					return downloadData.torrentId !== action.payload.torrentId;
+				}) : state.downloadData,
+				shareData: action.payload.isUpload ? state.shareData.filter((shareData) => {
+					return shareData.torrentId !== action.payload.torrentId;
+				}) : state.shareData,
 				downloadError: null
 			}
 		case SharingActions.DOWNLOAD_REQUEST_ERROR:
@@ -90,6 +91,35 @@ export function sharingReducer(state = initialState, action: SharingActions.Shar
 				downloadLoading: false,
 				isDownloading: false,
 				downloadError: action.payload,
+			}
+
+		case SharingActions.ALL_TORRENTS_REQUEST:
+			return {
+				...state,
+				shareLoading: true,
+				shareData: [],
+				isSharing: false,
+				shareError: null,
+				downloadLoading: true,
+				downloadData: [],
+				isDownloading: false,
+				downloadError: null
+			}
+		case SharingActions.ALL_TORRENTS:
+			return {
+				...state,
+				shareLoading: false,
+				shareData: action.payload.uploading,
+				isSharing: false,
+				downloadLoading: false,
+				downloadData: action.payload.downloading,
+				isDownloading: false,
+			}
+		case SharingActions.TORRENT_STATS:
+			return {
+				...state,
+				shareData: action.payload.isUpload ? action.payload.torrentData : state.shareData,
+				downloadData: !action.payload.isUpload ? action.payload.torrentData : state.downloadData
 			}
 
 		default: return state

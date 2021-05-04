@@ -61,7 +61,7 @@ const server = app.listen(3000, function () {
 
 const io = require('socket.io')(server, {
     cors: {
-        origin: ["http://localhost:4200", "http://192.168.1.10:4200"],
+        origin: ["http://localhost:4200", "http://192.168.1.10:4200", "http://192.168.29.144:4200"],
         methods: ["GET", "POST"],
         transports: ['websocket', 'polling'],
         allowedHeaders: ["my-custom-header"],

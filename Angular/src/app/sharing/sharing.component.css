@@ -1,3 +1,49 @@
 form input {
 	width: 100%;
 }
+
+.single-album-info .single-album-details .details-top {
+    border-bottom: 2px solid #f8f8f8;
+    padding-bottom: 20px;
+    position: relative;
+    padding-bottom: 0px;
+}
+
+.single-album-info .single-album-details .details-top:after {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 2px;
+    background: #6610f2;
+    bottom: -2px;
+    left: 0;
+}
+
+.single-album-info .single-album-details {
+	padding: 10px 20px;
+}
+
+.single-album-info .single-album-details ul {
+	padding-top: 20px;
+	padding-bottom: 10px;
+	width: 100%;
+	font-family: "Changa", sans-serif;
+}
+
+.single-album-info .single-album-details .stats {
+	padding-top: 20px;
+	padding-bottom: 10px;
+	font-family: "Changa", sans-serif;
+	list-style: none;
+	font-size: 16px;
+	color: #585757;
+	font-weight: 500;
+	margin-bottom: 2px;
+}
+
+.single-album-info .single-album-details .stats-light {
+	font-weight: 400;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

@@ -2,17 +2,22 @@ import { Action } from "@ngrx/store";
 
 export const START_SHARING_REQUEST = "[SHARING] START SHARING REQUEST";
 export const START_SHARING = "[SHARING] START SHARING";
-export const STOP_SHARING_REQUEST = "[SHARING] STOP SHARING REQUEST";
-export const STOP_SHARING = "[SHARING] STOP SHARING";
+
 
 export const START_DOWNLOAD_REQUEST = "[SHARING] START DOWNLOAD REQUEST";
 export const START_DOWNLOAD = "[SHARING] START DOWNLOAD";
-export const STOP_DOWNLOAD_REQUEST = "[SHARING] STOP DOWNLOAD REQUEST";
-export const STOP_DOWNLOAD = "[SHARING] STOP DOWNLOAD";
+
+export const STOP_TORRENT_REQUEST = "[SHARING] STOP TORRENT REQUEST";
+export const STOP_TORRENT = "[SHARING] STOP TORRENT";
 
 export const SHARING_REQUEST_ERROR = "[SHARING] SHARING REQUEST ERROR";
 export const DOWNLOAD_REQUEST_ERROR = "[SHARING] DOWNLOAD REQUEST ERROR";
 
+export const ALL_TORRENTS_REQUEST = "[SHARING] ALL TORRENTS REQUEST";
+export const ALL_TORRENTS = "[SHARING] ALL TORRENTS";
+
+export const TORRENT_STATS_REQUEST = "[SHARING] TORRENT STATS REQUEST";
+export const TORRENT_STATS = "[SHARING] TORRENT STATS";
 
 export class StartSharingRequest implements Action {
 	readonly type = START_SHARING_REQUEST;
@@ -22,15 +27,16 @@ export class StartSharingRequest implements Action {
 export class StartSharing implements Action {
 	readonly type = START_SHARING;
 
-	constructor(public payload: { shareString: string, torrentId: string, name: string }) { }
-}
-export class StopSharingRequest implements Action {
-	readonly type = STOP_SHARING_REQUEST;
-	constructor(public payload: string) { }
-}
-export class StopSharing implements Action {
-	readonly type = STOP_SHARING;
-	constructor(public payload: string) { }
+	constructor(public payload: {
+		name: string,
+		downloaded: number,
+		uploaded: number,
+		upSpeed: number,
+		downSpeed: number,
+		completed: number,
+		size: number,
+		shareString: string,
+	}) { }
 }
 
 export class StartDownloadRequest implements Action {
@@ -41,14 +47,25 @@ export class StartDownloadRequest implements Action {
 export class StartDownload implements Action {
 	readonly type = START_DOWNLOAD;
 
-	constructor(public payload: { name: string, torrentId: string, size: string }) { }
+	constructor(public payload: {
+		name: string,
+		downloaded: number,
+		uploaded: number,
+		upSpeed: number,
+		downSpeed: number,
+		completed: number,
+		size: number,
+		shareString: string,
+	}) { }
 }
-export class StopDownloadRequest implements Action {
-	readonly type = STOP_DOWNLOAD_REQUEST;
+
+export class StopTorrentRequest implements Action {
+	readonly type = STOP_TORRENT_REQUEST;
+	constructor(public payload: { torrentId: string, isUpload: boolean }) { }
 }
-export class StopDownload implements Action {
-	readonly type = STOP_DOWNLOAD;
-	constructor(public payload: string) { }
+export class StopTorrent implements Action {
+	readonly type = STOP_TORRENT;
+	constructor(public payload: { torrentId: string, isUpload: boolean }) { }
 }
 
 export class SharingRequestError implements Action {
@@ -60,13 +77,32 @@ export class DownloadRequestError implements Action {
 	constructor(public payload: string) { }
 }
 
+export class AllTorrentsRequest implements Action {
+	readonly type = ALL_TORRENTS_REQUEST;
+}
+export class AllTorrents implements Action {
+	readonly type = ALL_TORRENTS;
+	constructor(public payload: { downloading: any, uploading: any }) { }
+}
+
+export class TorrentStatsRequest implements Action {
+	readonly type = TORRENT_STATS_REQUEST;
+	constructor(public payload: boolean) { }
+}
+export class TorrentStats implements Action {
+	readonly type = TORRENT_STATS;
+	constructor(public payload: { torrentData: any, isUpload: boolean }) { }
+}
+
 export type SharingActions = StartSharingRequest
 	| StartSharing
-	| StopSharingRequest
-	| StopSharing
 	| StartDownloadRequest
 	| StartDownload
-	| StopDownloadRequest
-	| StopDownload
+	| StopTorrentRequest
+	| StopTorrent
 	| SharingRequestError
-	| DownloadRequestError;
+	| DownloadRequestError
+	| AllTorrentsRequest
+	| AllTorrents
+	| TorrentStatsRequest
+	| TorrentStats;

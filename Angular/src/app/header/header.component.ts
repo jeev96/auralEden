@@ -60,7 +60,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 			this.isLoggedIn = !!authState.user;
 			this.username = !!authState.user ? authState.user.username : null;
 			this.selectedDevice = authState.selectedDevice;
-			console.log(this.selectedDevice);
 
 			if (!authState.user) {
 				this.devices = [];

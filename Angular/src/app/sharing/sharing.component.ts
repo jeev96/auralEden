@@ -27,6 +27,8 @@ export class SharingComponent implements OnInit, OnDestroy {
 	downloadError = null;
 
 	isDeleting = null;
+	shareTimer = null;
+	downloadTimer = null;
 
 	shareData = [];
 	downloadData = [];
@@ -50,12 +52,17 @@ export class SharingComponent implements OnInit, OnDestroy {
 			this.downloadError = sharingData.downloadError;
 			this.shareData = sharingData.shareData;
 			this.downloadData = sharingData.downloadData;
-
 			this.isDeleting = null;
+			console.log(sharingData.downloadData);
+
+
+			this.updateIntervals();
 		});
 	}
 	ngOnDestroy() {
 		this.storeSub.unsubscribe();
+		clearInterval(this.shareTimer);
+		clearInterval(this.downloadTimer);
 	}
 
 	private initForms() {
@@ -69,7 +76,23 @@ export class SharingComponent implements OnInit, OnDestroy {
 
 	}
 
-	prettyBytes(num) {
+	private updateIntervals() {
+		clearInterval(this.shareTimer);
+		clearInterval(this.downloadTimer);
+		if (this.shareData.length > 0) {
+			this.shareTimer = setInterval(() => this.updateStats(true), 5000);
+		}
+		if (this.downloadData.length > 0) {
+			this.downloadTimer = setInterval(() => this.updateStats(false), 5000);
+		}
+	}
+
+	private updateStats(isUpload: boolean) {
+		console.log("here");
+		this.store.dispatch(new SharingActions.TorrentStatsRequest(isUpload));
+	}
+
+	prettyBytes(num: number) {
 		let exponent, unit, neg = num < 0, units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
 		if (neg) num = -num
 		if (num < 1) return (neg ? '-' : '') + num + ' B'
@@ -94,22 +117,12 @@ export class SharingComponent implements OnInit, OnDestroy {
 
 	}
 
-	stopClient(torrentId) {
+	stopClient(torrentId, isUpload) {
 		this.isDeleting = torrentId;
-		this.store.dispatch(new SharingActions.StopSharingRequest(torrentId));
+		this.store.dispatch(new SharingActions.StopTorrentRequest({ torrentId: torrentId, isUpload: isUpload }));
 	}
 
 	copy(link) {
 		this.clipboardService.copy(link);
-	}
-
-	getStats(torrentId) {
-		console.log(torrentId);
-
-		this.http.post(environment.getTorrentStats, { torrentId: torrentId, isUpload: false }).subscribe((res) => {
-			console.log(res);
-		}, error => {
-			console.log(error);
-		})
 	}
 }
