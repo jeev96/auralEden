@@ -28,7 +28,6 @@ export const environment = {
 	shareContent: "http://192.168.1.10:3000/api/share/share-content",
 	downloadContent: "http://192.168.1.10:3000/api/share/download-content",
 	stopTorrent: "http://192.168.1.10:3000/api/share/stop-torrent",
-	getTorrentStats: "http://192.168.1.10:3000/api/share/stats",
 	allTorrents: "http://192.168.1.10:3000/api/share/all-torrents",
 
 };

@@ -51,15 +51,4 @@ router.post("/stop-torrent", function (req, res) {
     })
 });
 
-router.post("/stats", function (req, res) {
-    shareService.getStats(req.body.isUpload).then((stats) => {
-        return res.status(200).send(stats);
-    }).catch((error) => {
-        return res.status(500).send({
-            status: "faliure",
-            error: error.message
-        });
-    })
-})
-
 module.exports = router;

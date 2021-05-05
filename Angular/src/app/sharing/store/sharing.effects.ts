@@ -82,9 +82,7 @@ export class SharingEffects {
 
 	torrentStatsRequest$ = createEffect(() =>
 		this.actions$.pipe(ofType(SharingActions.TORRENT_STATS_REQUEST), switchMap((sharingAction: SharingActions.TorrentStatsRequest) => {
-			return this.http.post<{ torrentData: any, isUpload: boolean }>(environment.getTorrentStats, {
-				isUpload: sharingAction.payload
-			});
+			return this.http.get<{ downloading: any, uploading: any }>(environment.allTorrents);
 		}), map((response) => {
 			return new SharingActions.TorrentStats(response);
 		}), catchError((error: any) => {

@@ -92,7 +92,6 @@ export function sharingReducer(state = initialState, action: SharingActions.Shar
 				isDownloading: false,
 				downloadError: action.payload,
 			}
-
 		case SharingActions.ALL_TORRENTS_REQUEST:
 			return {
 				...state,
@@ -118,8 +117,12 @@ export function sharingReducer(state = initialState, action: SharingActions.Shar
 		case SharingActions.TORRENT_STATS:
 			return {
 				...state,
-				shareData: action.payload.isUpload ? action.payload.torrentData : state.shareData,
-				downloadData: !action.payload.isUpload ? action.payload.torrentData : state.downloadData
+				shareLoading: false,
+				shareData: action.payload.uploading,
+				isSharing: false,
+				downloadLoading: false,
+				downloadData: action.payload.downloading,
+				isDownloading: false,
 			}
 
 		default: return state

@@ -87,11 +87,10 @@ export class AllTorrents implements Action {
 
 export class TorrentStatsRequest implements Action {
 	readonly type = TORRENT_STATS_REQUEST;
-	constructor(public payload: boolean) { }
 }
 export class TorrentStats implements Action {
 	readonly type = TORRENT_STATS;
-	constructor(public payload: { torrentData: any, isUpload: boolean }) { }
+	constructor(public payload: { downloading: any, uploading: any }) { }
 }
 
 export type SharingActions = StartSharingRequest

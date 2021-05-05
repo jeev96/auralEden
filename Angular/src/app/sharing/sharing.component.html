@@ -60,7 +60,7 @@
 										<h6>{{ shareElement.name }}</h6>
 									</div>
 									<div class="d-flex flex-wrap align-items-center justify-content-start stats">
-										<div class="col-sm-3">Speed <i class="fas fa-long-arrow-alt-down"></i><i
+										<div class="col-sm-3">Speed (ps)<i class="fas fa-long-arrow-alt-down"></i><i
 												class="fas fa-long-arrow-alt-up"></i></div>
 										<div class="col-sm-3 stats-light">{{ prettyBytes(shareElement.downSpeed) }}/{{ prettyBytes(shareElement.upSpeed) }}
 										</div>
@@ -143,7 +143,7 @@
 										<div class="col-sm-3">Size</div>
 										<div class="col-sm-3 stats-light">{{ prettyBytes(downloadElement.size) }}</div>
 										<div class="col-sm-3">Downloaded</div>
-										<div class="col-sm-3 stats-light">{{ prettyBytes(downloadElement.downloaded) }}</div>
+										<div class="col-sm-3 stats-light">{{ prettyBytes(downloadElement.downloaded) }}/{{ prettyBytes(downloadElement.size) }}</div>
 										<div class="col-sm-3">Uploaded</div>
 										<div class="col-sm-3 stats-light">{{ prettyBytes(downloadElement.uploaded) }}</div>
 									</div>

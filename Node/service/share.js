@@ -1,7 +1,7 @@
 const WebTorrent = require('webtorrent');
 const fs = require('fs-extra');
 
-let clientUpload = new WebTorrent();
+let clientUpload = new WebTorrent({ torrentPort: 40997 });
 let clientDownload = new WebTorrent();
 
 function createShareClient(contentPath) {
@@ -14,13 +14,12 @@ function createShareClient(contentPath) {
             clientUpload.seed(contentPath, {
                 announce: [
                     "http://110.225.244.39:20997/announce",
-                    "http://49.36.155.220:20997/announce",
-                    "udp://110.225.244.39:20997/",
-                    "udp://49.36.155.220:20997/",
+                    "udp://110.225.244.39:20997/"
                 ]
             }, function (torrent) {
                 torrent.on("seed", function (params) {
                     console.log("Seeding Now....");
+                    console.log("seeders: " + clientUpload.torrents.length);
                 })
                 torrent.on("error", function (err) {
                     console.log("ERROR: " + err);
@@ -29,7 +28,6 @@ function createShareClient(contentPath) {
                 torrent.on('warning', function (warning) {
                     console.log("WARNING: " + warning);
                 })
-                console.log("seeders: " + clientUpload.torrents.length);
                 return resolve({
                     name: torrent.name,
                     torrentId: torrent.infoHash,
@@ -60,11 +58,7 @@ function createDownloadClient(shareString, saveLocation) {
                 console.log('Client is downloading:', torrent.infoHash)
 
                 torrent.on('done', function () {
-                    clearInterval(interval);
                     console.log('Torrent Download finished');
-                    torrent.destroy((id) => {
-                        console.log("Torrent destoryed!!");
-                    });
                 })
                 torrent.on("error", function (err) {
                     console.log(err);
@@ -134,31 +128,6 @@ module.exports = {
             }).catch((error) => {
                 return reject(error);
             })
-        })
-    },
-    getStats: function (isUpload) {
-        return new Promise((resolve, reject) => {
-            let data = [];
-            const client = isUpload ? clientUpload : clientDownload;
-
-            client.torrents.forEach(torrent => {
-                data.push({
-                    name: torrent.name,
-                    torrentId: torrent.infoHash,
-                    downloaded: torrent.downloaded,
-                    uploaded: torrent.uploaded,
-                    upSpeed: torrent.uploadSpeed,
-                    downSpeed: torrent.downloadSpeed,
-                    completed: torrent.progress,
-                    size: torrent.length,
-                    shareString: torrent.magnetURI,
-                })
-            });
-
-            resolve({
-                torrentData: data,
-                isUpload: isUpload
-            });
         })
     },
     getAllTorrents: function () {

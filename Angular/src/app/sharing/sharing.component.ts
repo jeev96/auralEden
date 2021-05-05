@@ -27,7 +27,7 @@ export class SharingComponent implements OnInit, OnDestroy {
 	downloadError = null;
 
 	isDeleting = null;
-	shareTimer = null;
+	statsTimer = null;
 	downloadTimer = null;
 
 	shareData = [];
@@ -53,16 +53,13 @@ export class SharingComponent implements OnInit, OnDestroy {
 			this.shareData = sharingData.shareData;
 			this.downloadData = sharingData.downloadData;
 			this.isDeleting = null;
-			console.log(sharingData.downloadData);
-
 
 			this.updateIntervals();
 		});
 	}
 	ngOnDestroy() {
 		this.storeSub.unsubscribe();
-		clearInterval(this.shareTimer);
-		clearInterval(this.downloadTimer);
+		clearInterval(this.statsTimer);
 	}
 
 	private initForms() {
@@ -77,19 +74,14 @@ export class SharingComponent implements OnInit, OnDestroy {
 	}
 
 	private updateIntervals() {
-		clearInterval(this.shareTimer);
-		clearInterval(this.downloadTimer);
+		clearInterval(this.statsTimer);
 		if (this.shareData.length > 0) {
-			this.shareTimer = setInterval(() => this.updateStats(true), 5000);
-		}
-		if (this.downloadData.length > 0) {
-			this.downloadTimer = setInterval(() => this.updateStats(false), 5000);
+			this.statsTimer = setInterval(() => this.updateStats(), 5000);
 		}
 	}
 
-	private updateStats(isUpload: boolean) {
-		console.log("here");
-		this.store.dispatch(new SharingActions.TorrentStatsRequest(isUpload));
+	private updateStats() {
+		this.store.dispatch(new SharingActions.TorrentStatsRequest());
 	}
 
 	prettyBytes(num: number) {
