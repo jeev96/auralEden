@@ -88,10 +88,10 @@
 									</div>
 									<div class="d-flex flex-wrap align-items-center justify-content-start stats my-1"
 										*ngFor="let otherData of searchDataOthers; let i = index"
-										[title]="displayCompleteInfo(ownData)">
+										[title]="displayCompleteInfo(otherData)">
 										<div class="col-sm-4 text-left">{{ otherData.name }}</div>
 										<div class="col-sm-4 text-left">{{ otherData.common.artist }}</div>
-										<div class="col-sm-2">{{ getBitrate(otherData.format.bitrate) }}</div>
+										<div class="col-sm-2">{{ getBitrate(otherData.format.bitrate) }} kbps</div>
 										<div class="col-sm-2">
 											<button class="btn btn-primary mx-1" (click)="play()">
 												<i class="fas fa-play"></i>
