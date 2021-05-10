@@ -1,0 +1,25 @@
+form input {
+	width: 100%;
+}
+
+.store-btn:hover {
+	color: #fff;
+	border: 2px solid #fff;
+	background: #6f42c1;
+}
+
+.store-btn {
+	color: #816ec0;
+	border: 2px solid #816ec0;
+}
+
+.stats div div {
+	font-weight: 400;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.stats:hover {
+	background: rgba(10, 10, 10, .1);
+}

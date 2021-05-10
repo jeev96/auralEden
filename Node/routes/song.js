@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { Readable } = require("stream");
 const fs = require("fs-extra");
-const path = require("path");
 const mime = require('mime-types');
 
 const dbService = require("../service/Database/songMetaData");

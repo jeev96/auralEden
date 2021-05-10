@@ -1,6 +1,8 @@
 const WebTorrent = require('webtorrent');
 const fs = require('fs-extra');
 
+const miscConstants = require("../constants/misc");
+
 let clientUpload = new WebTorrent({ torrentPort: 40997 });
 let clientDownload = new WebTorrent();
 
@@ -12,10 +14,7 @@ function createShareClient(contentPath) {
             }
             console.log("Starting Seeder.....");
             clientUpload.seed(contentPath, {
-                announce: [
-                    "http://110.225.244.39:20997/announce",
-                    "udp://110.225.244.39:20997/"
-                ]
+                announce: miscConstants.TRACKER_URLS
             }, function (torrent) {
                 torrent.on("seed", function (params) {
                     console.log("Seeding Now....");

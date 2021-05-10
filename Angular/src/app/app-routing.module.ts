@@ -7,6 +7,7 @@ import { LibraryComponent } from './library/library.component';
 import { PlayerComponent } from './player/player.component';
 import { SongResolverService } from './player/song-resolver.service';
 import { PlaylistComponent } from './playlist/playlist.component';
+import { SearchComponent } from './search/search.component';
 import { SettingsComponent } from './settings/settings.component';
 import { SharingResolverService } from './sharing/sharing-resolver.service';
 import { SharingComponent } from './sharing/sharing.component';
@@ -17,6 +18,7 @@ const routes: Routes = [
 	{ path: "signup", component: AuthComponent },
 	{ path: "library", component: LibraryComponent },
 	{ path: "playlist", component: PlaylistComponent },
+	{ path: "search", component: SearchComponent },
 	{ path: "sharing", component: SharingComponent, resolve: [SharingResolverService] },
 	{ path: "player", component: PlayerComponent, resolve: [SongResolverService] },
 	{ path: "settings", component: SettingsComponent, canActivate: [AuthGuard]}

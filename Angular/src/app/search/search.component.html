@@ -1,0 +1,117 @@
+<section class="page-header" style="background-image: url('/assets/media/background/7.jpg');">
+	<div class="tim-container">
+		<div class="page-header-title text-center">
+			<h3>Search to your Heart's Content</h3>
+			<h2>Search Zone</h2>
+		</div>
+
+		<div class="breadcrumbs">
+			<a routerLink="/">Home</a>
+			<span>/</span>
+			<span>Search</span>
+		</div>
+
+	</div>
+	<!-- /.tim-container -->
+</section>
+<!-- /#page-header -->
+
+<section class="contuct-bottom section-padding">
+	<div class="container">
+		<div class="row justify-content-center mb-4">
+			<div class="col-md-10 col-lg-8">
+				<div class="con-bottom-inner">
+					<h4>Search</h4>
+					<div class="per-social">
+						<ul>
+							<li><a href="#"><i class="fas fa-music"></i></a></li>
+							<li><a href="#"><i class="fas fa-drum"></i></a></li>
+							<li><a href="#"><i class="fas fa-guitar"></i></a></li>
+							<li><a href="#"><i class="fas fa-drum-steelpan"></i></a></li>
+							<li><a href="#"><i class="fas fa-headphones"></i></a></li>
+							<li><a href="#"><i class="fas fa-microphone"></i></a></li>
+							<li><a href="#"><i class="fas fa-podcast"></i></a></li>
+							<li><a href="#"><i class="fas fa-sliders-h"></i></a></li>
+						</ul>
+					</div>
+
+					<div class="con-page-form col-sm-12">
+						<div *ngIf="isLoading" style="text-align: center;">
+							<app-loading-spinner></app-loading-spinner>
+						</div>
+						<form [formGroup]="searchForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+							<input type="text" formControlName="searchString" placeholder="Music | Tv Shows | Movies"
+								class="mx-1 col-sm-12">
+							<button class="btn btn-info col-sm-4 my-3 py-2" type="submit"
+								[disabled]="!searchForm.valid">
+								Search <i class="fas fa-search"></i>
+							</button>
+						</form>
+					</div>
+
+					<div *ngIf="searchDataOwn.length > 0">
+						<div class="row single-album-info">
+							<div class="col-md-12 padding-remove">
+								<div class="single-album-details">
+									<div class="details-top">
+										<h6>Own Server</h6>
+									</div>
+									<div class="d-flex flex-wrap align-items-center justify-content-start stats my-1"
+										*ngFor="let ownData of searchDataOwn; let i = index"
+										[title]="displayCompleteInfo(ownData)">
+										<div class="col-sm-4 text-left">{{ ownData.name }}</div>
+										<div class="col-sm-4 text-left">{{ ownData.common.artist }}</div>
+										<div class="col-sm-2">{{ getBitrate(ownData.format.bitrate) }} kbps</div>
+										<div class="col-sm-2">
+											<button class="btn btn-primary mx-1" (click)="play()">
+												<i class="fas fa-play"></i>
+											</button>
+											<button class="btn btn-info mx-1" (click)="download()">
+												<i class="fas fa-download"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div *ngIf="false" style="width: 100%;"
+								class="d-flex flex-wrap align-items-center justify-content-center">
+								<app-loading-spinner></app-loading-spinner>
+							</div>
+						</div>
+					</div>
+					<div *ngIf="searchDataOthers.length > 0">
+						<div class="row single-album-info my-3">
+							<div class="col-md-12 padding-remove">
+								<div class="single-album-details">
+									<div class="details-top">
+										<h6>Other Servers</h6>
+									</div>
+									<div class="d-flex flex-wrap align-items-center justify-content-start stats my-1"
+										*ngFor="let otherData of searchDataOthers; let i = index"
+										[title]="displayCompleteInfo(ownData)">
+										<div class="col-sm-4 text-left">{{ otherData.name }}</div>
+										<div class="col-sm-4 text-left">{{ otherData.common.artist }}</div>
+										<div class="col-sm-2">{{ getBitrate(otherData.format.bitrate) }}</div>
+										<div class="col-sm-2">
+											<button class="btn btn-primary mx-1" (click)="play()">
+												<i class="fas fa-play"></i>
+											</button>
+											<button class="btn btn-info mx-1" (click)="download()">
+												<i class="fas fa-download"></i>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div *ngIf="false" style="width: 100%;"
+								class="d-flex flex-wrap align-items-center justify-content-center">
+								<app-loading-spinner></app-loading-spinner>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</section>

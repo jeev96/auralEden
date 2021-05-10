@@ -10,7 +10,7 @@ async function deleteAll() {
     }
 }
 
-function queryBuilder(pattern) {
+function queryBuilder(pattern, category = dbConstants.CONTENT_TYPE.MUSIC) {
     if (pattern === "")
         return {}
     return {
@@ -33,7 +33,7 @@ function sortQuery(sortParams) {
         case 6: colName = "format.bitrate"; break;
         default: colName = "name"; break;
     }
-    let sort = sortParams.dir === "asc" ? 1 : -1
+    let sort = sortParams.dir === "desc" ? -1 : 1
     return {
         [colName]: sort
     }
@@ -91,7 +91,7 @@ module.exports = {
             throw (error);
         }
     },
-    search: async function (pattern, sortParams, skip, limit) {
+    search: async function (pattern, sortParams = {}, skip = dbConstants.DEFAULT_SKIP, limit = dbConstants.DEFAULT_LIMIT) {
         const query = queryBuilder(pattern);
         const sort = sortQuery(sortParams);
         return await this.find(query, sort, skip, limit);

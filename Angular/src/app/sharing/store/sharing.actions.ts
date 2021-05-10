@@ -3,7 +3,6 @@ import { Action } from "@ngrx/store";
 export const START_SHARING_REQUEST = "[SHARING] START SHARING REQUEST";
 export const START_SHARING = "[SHARING] START SHARING";
 
-
 export const START_DOWNLOAD_REQUEST = "[SHARING] START DOWNLOAD REQUEST";
 export const START_DOWNLOAD = "[SHARING] START DOWNLOAD";
 

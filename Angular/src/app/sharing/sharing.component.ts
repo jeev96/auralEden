@@ -6,8 +6,6 @@ import { Subscription } from 'rxjs';
 
 import * as fromApp from "../store/app.reducer";
 import * as SharingActions from "./store/sharing.actions";
-import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-sharing',
@@ -38,7 +36,6 @@ export class SharingComponent implements OnInit, OnDestroy {
 	constructor(
 		private store: Store<fromApp.AppState>,
 		private clipboardService: ClipboardService,
-		private http: HttpClient
 	) { }
 
 	ngOnInit(): void {
@@ -70,7 +67,6 @@ export class SharingComponent implements OnInit, OnDestroy {
 			"encryptedCode": new FormControl(null, Validators.required),
 			"saveLocation": new FormControl(null, Validators.required),
 		});
-
 	}
 
 	private updateIntervals() {

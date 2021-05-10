@@ -1,5 +1,6 @@
 const express = require("express"),
     app = express(),
+    appSearch = express(),
     process = require('process'),
     cors = require('cors'),
     bodyParser = require("body-parser"),
@@ -8,12 +9,15 @@ const express = require("express"),
     passport = require('passport'),
     fileupload = require("express-fileupload");
 
+const miscConstants = require("./constants/misc");
+
 // routes
 let indexRoutes = require("./routes/index");
 let authRoutes = require("./routes/auth");
 let devicesRoutes = require("./routes/devices");
 let libraryRoutes = require("./routes/library");
 let sharingRoutes = require("./routes/sharing");
+let searchRoutes = require("./routes/search");
 let songRoutes = require("./routes/song");
 
 // assign mongoose promise library and connect to database
@@ -31,12 +35,14 @@ mongoose.connect(databaseUri, {
     useFindAndModify: false
 }).then(() => console.log(`Database connected`)).catch(err => console.log(`Database connection error: ${err.message}`));
 
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+appSearch.use(express.urlencoded({ extended: true }));
+appSearch.use(express.json());
 
-app.use(bodyParser.json()); app.set("view engine", "ejs");
 app.use(cors());
+appSearch.use(cors());
+
 app.use(fileupload());
 app.use(passport.initialize());
 app.use(cookieParser('secret'));
@@ -53,15 +59,19 @@ app.use("/api/auth", authRoutes);
 app.use("/api/devices", devicesRoutes);
 app.use("/api/library", libraryRoutes);
 app.use("/api/share", sharingRoutes);
+appSearch.use("/api/search", searchRoutes);
 app.use("/api/song", songRoutes);
 
-const server = app.listen(3000, function () {
+const server = app.listen(miscConstants.APPLICATION_LOCAL_PORT, function () {
     console.log("The server has started!");
 });
+appSearch.listen(miscConstants.APPLICATION_SEARCH_PORT, function () {
+    console.log("Search server has started!");
+})
 
 const io = require('socket.io')(server, {
     cors: {
-        origin: ["http://localhost:4200", "http://192.168.1.10:4200", "http://192.168.29.144:4200"],
+        origin: ["http://localhost:4200", "http://192.168.1.10:4200", "http://192.168.*.*:4200"],
         methods: ["GET", "POST"],
         transports: ['websocket', 'polling'],
         allowedHeaders: ["my-custom-header"],
@@ -69,6 +79,9 @@ const io = require('socket.io')(server, {
     },
     allowEIO3: true
 });
+
+const bitTracker = require("./service/tracker");
+bitTracker.startTracker();
 
 const socketService = require("./service/socket")(io);
 const devicesService = require("./service/devices");
