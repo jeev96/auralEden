@@ -1,5 +1,3 @@
-const http = require('http');
-
 const trackerService = require("../service/tracker");
 const dbService = require("../service/Database/songMetaData");
 const utilService = require("../service/util");
@@ -14,7 +12,7 @@ async function searchOnlineServers(searchString) {
 
         return await utilService.cleanGlobalSearchData(result);
     } catch (error) {
-        console.log(error.message);
+        console.log(error);
         return [];
     }
 }

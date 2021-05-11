@@ -6,5 +6,5 @@ module.exports = {
         "udp://110.225.244.39:20997/"
     ],
     APPLICATION_SEARCH_PORT: 40998,
-    APPLICATION_LOCAL_PORT: 40999
+    APPLICATION_LOCAL_PORT: 3000
 }

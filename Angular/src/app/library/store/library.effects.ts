@@ -24,7 +24,7 @@ export class LibraryEffects {
 
 	getLibraryDataRequest$ = createEffect(() =>
 		this.actions$.pipe(ofType(LibraryActions.GET_LIBRARY_DATA_REQUEST), switchMap((libraryActions: LibraryActions.GetLibraryDataRequest) => {
-			return this.http.get<LibraryResponseData>(environment.getLibraryDataURL);
+			return this.http.get<LibraryResponseData>(environment.getLibraryData);
 		}), map((response) => {
 			return new LibraryActions.SetLibraryData(response);
 		}), catchError((error: any) => {

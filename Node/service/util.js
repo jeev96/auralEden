@@ -3,15 +3,23 @@ const request = require("request-promise");
 const http = require('http');
 
 module.exports = {
-    cleanSearchData: function (dataArray) {
-        const cleanedData = dataArray.map(element => {
+    cleanSearchData: function (data) {
+        if (!Array.isArray(data)) {
             return {
+                _id: data._id,
+                name: data.name,
+                format: data.format,
+                common: data.common
+            }
+        }
+        return data.map(element => {
+            return {
+                _id: element._id,
                 name: element.name,
                 format: element.format,
                 common: element.common
             }
         });
-        return cleanedData;
     },
     cleanGlobalSearchData: function (dataArray) {
         let cleanedData = [];
@@ -36,6 +44,10 @@ module.exports = {
 
         return id;
     },
+    getRequestIP: function (request) {
+        const ip = request.headers['x-forwarded-for'] || request.socket.remoteAddress;
+        return ip.substr(0, 7) == "::ffff:" ? ip.substr(7) : ip;
+    },
     getSearchUrlsFormPeers: function (searchString, peers) {
         if (searchString == null || peers.length === 0) {
             return;
@@ -44,7 +56,6 @@ module.exports = {
         let urls = peers.map(peer => {
             return `http://${peer.ip}:${peer.port}/api/search/${searchString.trim()}`;
         })
-        // urls.push(`http://localhost:3000/api/search/${searchString.trim()}`)
         return urls;
     },
     createGlobalSearchRequest: async function (url) {

@@ -90,7 +90,7 @@ export class PlayerRemoteData implements Action {
 // current song
 export class CurrentSongRequest implements Action {
 	readonly type = CURRENT_SONG_REQUEST;
-	constructor(public payload: string) { }
+	constructor(public payload: string, public islocal: boolean = true) { }
 }
 export class CurrentSong implements Action {
 	readonly type = CURRENT_SONG;

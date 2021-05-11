@@ -46,7 +46,6 @@ router.post("/upload", async function (req, res) {
 router.get("/:id", async function (req, res) {
     try {
         const data = await dbService.findById(req.params.id);
-
         return res.status(200).send(data);
     } catch (error) {
         return res.status(500).send({

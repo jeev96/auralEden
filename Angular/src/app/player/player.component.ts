@@ -63,7 +63,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 			this.paused = playerData.paused;
 			this.stopped = playerData.stopped;
 			this.volume = playerData.volume * 100;
-			if (this.getDeviceId() !== this.selectedDevice) {
+			if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 				this.timeElapsed = playerData.timeElapsed;
 				this.error = playerData.error;
 			} else {
@@ -89,7 +89,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	play() {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.PLAY_SONG_REQUEST,
@@ -104,7 +104,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 		}
 	}
 	pause() {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.PAUSE_SONG_REQUEST,
@@ -119,7 +119,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	stop() {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.STOP_SONG_REQUEST,
@@ -132,7 +132,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	changeCurrentSong(songId) {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.CURRENT_SONG_REQUEST,
@@ -145,7 +145,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	next() {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.PLAY_NEXT_SONG_REQUEST,
@@ -158,7 +158,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	previous() {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.PLAY_PREVIOUS_SONG_REQUEST,
@@ -171,7 +171,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	removeFromPlaylist(songId) {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.DELETE_PLAYLIST_SONG_REQUEST,
@@ -184,7 +184,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	mute(mute: boolean) {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.CHANGE_VOLUME_REQUEST,
@@ -196,7 +196,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 		this.store.dispatch(new PlayerActions.ChangeVolumeRequest(mute ? 0 : 0.5));
 	}
 	changeVolume(event) {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.CHANGE_VOLUME_REQUEST,
@@ -213,7 +213,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 		if (event.target) {
 			value = event.target.value
 		}
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.SEEK_TRACK_REQUEST,

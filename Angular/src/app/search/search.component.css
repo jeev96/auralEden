@@ -13,11 +13,12 @@ form input {
 	border: 2px solid #816ec0;
 }
 
-.stats div div {
+.stats div {
 	font-weight: 400;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	border-bottom: 1px solid rgba(10, 10, 10, .1);
 }
 
 .stats:hover {

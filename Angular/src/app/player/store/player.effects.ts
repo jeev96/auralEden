@@ -32,7 +32,9 @@ export interface SongResponseData {
 		numberOfChannels: Number,
 		bitrate: Number,
 		duration: Number
-	}
+	},
+	ip?: string,
+	port?: number
 }
 
 @Injectable()
@@ -83,9 +85,11 @@ export class PlayerEffects {
 
 	currentSongRequest$ = createEffect(() =>
 		this.actions$.pipe(ofType(PlayerActions.CURRENT_SONG_REQUEST), switchMap((playerActions: PlayerActions.CurrentSongRequest) => {
-			return this.http.get<SongResponseData>(environment.getLibraryDataURL + "/" + playerActions.payload);
+			const url = playerActions.islocal ? environment.getLibraryData + "/" + playerActions.payload : environment.globalSearchData + playerActions.payload;
+			return this.http.get<SongResponseData>(url);
 		}), map((response) => {
-			this.playerService.setAudioElementSource(environment.streamUrl + response["_id"]);
+			const streamUrl = response.ip ? environment.globalStream : environment.streamUrl;
+			this.playerService.setAudioElementSource(streamUrl + response["_id"]);
 			return new PlayerActions.CurrentSong(response);
 		}), catchError((error: any) => {
 			return of(new PlayerActions.PlayerError(error.message));
@@ -115,7 +119,8 @@ export class PlayerEffects {
 			} else if (playerState.currentSong == null && playerState.playlist.length > 0) {
 				return new PlayerActions.CurrentSongRequest(playerState.playlist[0][0]);
 			} else if (playerState.stopped == true && playerState.currentSong != null) {
-				this.playerService.setAudioElementSource(environment.streamUrl + playerState.currentSong["_id"]);
+				const streamUrl = playerState.currentSong.ip ? environment.globalStream : environment.streamUrl;
+				this.playerService.setAudioElementSource(streamUrl + playerState.currentSong["_id"]);
 			}
 			this.playerService.playAudioElementSource();
 			return new PlayerActions.PlaySong();

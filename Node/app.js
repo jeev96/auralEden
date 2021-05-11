@@ -18,6 +18,7 @@ let devicesRoutes = require("./routes/devices");
 let libraryRoutes = require("./routes/library");
 let sharingRoutes = require("./routes/sharing");
 let searchRoutes = require("./routes/search");
+let streamRoutes = require("./routes/stream");
 let songRoutes = require("./routes/song");
 
 // assign mongoose promise library and connect to database
@@ -60,6 +61,7 @@ app.use("/api/devices", devicesRoutes);
 app.use("/api/library", libraryRoutes);
 app.use("/api/share", sharingRoutes);
 appSearch.use("/api/search", searchRoutes);
+appSearch.use("/api/stream", streamRoutes);
 app.use("/api/song", songRoutes);
 
 const server = app.listen(miscConstants.APPLICATION_LOCAL_PORT, function () {
@@ -71,7 +73,7 @@ appSearch.listen(miscConstants.APPLICATION_SEARCH_PORT, function () {
 
 const io = require('socket.io')(server, {
     cors: {
-        origin: ["http://localhost:4200", "http://192.168.1.10:4200", "http://192.168.*.*:4200"],
+        origin: ["http://localhost:4200", "http://192.168.1.10:4200", "http://192.168.*.*:*"],
         methods: ["GET", "POST"],
         transports: ['websocket', 'polling'],
         allowedHeaders: ["my-custom-header"],

@@ -1,35 +1,39 @@
+const APPLICATION_LOCAL_IP = "192.168.1.10";
+const APPLICATION_LOCAL_PORT = 3000;
+const APPLICATION_SEARCH_PORT = 40998;
+
 export const environment = {
 	production: true,
 	// socket
-	socketUrl: "http://192.168.1.10:40999",
+	socketUrl: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}`,
 
 	// settings
-	setMediaLocationUrl: "http://192.168.1.10:40999/api/settings",
+	setMediaLocationUrl: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/settings`,
 
 	// library
-	getLibraryDataURL: "http://192.168.1.10:40999/api/library",
-	uploadUrl: "http://192.168.1.10:40999/api/library/upload",
+	getLibraryData: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/library`,
+	uploadUrl: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/library/upload`,
 
 	// player
-	albumArtUrl: "http://192.168.1.10:40999/api/song/albumArt/",
-	streamUrl: "http://192.168.1.10:40999/api/song/stream/",
+	albumArtUrl: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/song/albumArt/`,
+	streamUrl: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/song/stream/`,
 
 	// auth
-	authAuthenticate: "http://192.168.1.10:40999/api/auth/authenticate",
-	authSignup: "http://192.168.1.10:40999/api/auth/signup",
-	authLogin: "http://192.168.1.10:40999/api/auth/signin",
-	authLogoutAll: "http://192.168.1.10:40999/api/auth/alogout-all",
+	authAuthenticate: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/auth/authenticate`,
+	authSignup: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/auth/signup`,
+	authLogin: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/auth/signin`,
+	authLogoutAll: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/auth/alogout-all`,
 
 	// devices
-	changeDeviceStatus: "http://192.168.1.10:40999/api/devices/change-status",
-	getOnlineDevices: "http://192.168.1.10:40999/api/devices/online",
+	changeDeviceStatus: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/devices/change-status`,
+	getOnlineDevices: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/devices/online`,
 
 	// sharing
-	shareContent: "http://192.168.1.10:40999/api/share/share-content",
-	downloadContent: "http://192.168.1.10:40999/api/share/download-content",
-	stopTorrent: "http://192.168.1.10:40999/api/share/stop-torrent",
-	allTorrents: "http://192.168.1.10:40999/api/share/all-torrents",
+	shareContent: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/share/share-content`,
+	downloadContent: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/share/download-content`,
+	stopTorrent: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/share/stop-torrent`,
+	allTorrents: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/share/all-torrents`,
 
 	// search
-	search: "http://192.168.1.10:40998/api/search"
+	search: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_SEARCH_PORT}/api/search`,
 };

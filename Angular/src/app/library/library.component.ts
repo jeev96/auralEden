@@ -88,7 +88,7 @@ export class LibraryComponent implements OnInit, OnDestroy {
 			processing: false,
 			serverSide: true,
 			ajax: (dataTablesParameters: any, callback) => {
-				this.http.post<DataTablesResponse>(environment.getLibraryDataURL, dataTablesParameters, {}).subscribe(response => {
+				this.http.post<DataTablesResponse>(environment.getLibraryData, dataTablesParameters, {}).subscribe(response => {
 					this.store.dispatch(new LibraryActions.SetLibraryData({
 						data: response.data,
 						draw: response.draw,
@@ -115,7 +115,7 @@ export class LibraryComponent implements OnInit, OnDestroy {
 	}
 
 	playSong(songId) {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.PLAY_SONG_REQUEST,
@@ -124,11 +124,12 @@ export class LibraryComponent implements OnInit, OnDestroy {
 			this.socket.emit("controlDevice", data);
 			return;
 		}
+
 		this.store.dispatch(new PlayerActions.CurrentSongRequest(songId));
 	}
 
 	pauseSong() {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.PAUSE_SONG_REQUEST,
@@ -141,7 +142,7 @@ export class LibraryComponent implements OnInit, OnDestroy {
 	}
 
 	addToPlaylist(song) {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.ADD_PLAYLIST_SONG_REQUEST,
@@ -154,7 +155,7 @@ export class LibraryComponent implements OnInit, OnDestroy {
 	}
 
 	removeFromPlaylist(songId) {
-		if (this.getDeviceId() !== this.selectedDevice) {
+		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.DELETE_PLAYLIST_SONG_REQUEST,

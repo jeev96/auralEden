@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 
 import * as fromApp from "../store/app.reducer";
 import * as SearchActions from "./store/search.actions";
+import * as PlayerActions from "../player/store/player.actions";
 
 @Component({
 	selector: 'app-search',
@@ -19,7 +20,12 @@ export class SearchComponent implements OnInit, OnDestroy {
 	isLoading = false;
 	searchError = null;
 
+	currentSongId = null;
+	playing = false;
+	playlistIds = [];
+
 	private storeSub: Subscription;
+	private playerSub: Subscription;
 
 	constructor(private store: Store<fromApp.AppState>,) { }
 
@@ -31,10 +37,18 @@ export class SearchComponent implements OnInit, OnDestroy {
 			this.isLoading = searchData.searchLoading;
 			this.searchError = searchData.searchError;
 		});
+		this.playerSub = this.store.select("player").subscribe(playerData => {
+			if (playerData.currentSong) {
+				this.currentSongId = playerData.currentSong._id;
+			}
+			this.playing = playerData.playing;
+			this.playlistIds = playerData.playlist.map(song => song[0]);
+		});
 	}
 
 	ngOnDestroy() {
 		this.storeSub.unsubscribe();
+		this.playerSub.unsubscribe();
 	}
 
 	private initForm() {
@@ -48,8 +62,20 @@ export class SearchComponent implements OnInit, OnDestroy {
 		this.store.dispatch(new SearchActions.SearchRequest(this.searchForm.value.searchString));
 	}
 
-	play() {
+	playSong(songId, isLocal = true) {
+		this.store.dispatch(new PlayerActions.CurrentSongRequest(songId, isLocal));
+	}
 
+	pauseSong() {
+		this.store.dispatch(new PlayerActions.PauseSongRequest());
+	}
+
+	addToPlaylist(song) {
+		this.store.dispatch(new PlayerActions.AddPlaylistSongRequest(song));
+	}
+
+	removeFromPlaylist(songId) {
+		this.store.dispatch(new PlayerActions.DeletePlaylistSongRequest(songId));
 	}
 
 	download() {

@@ -63,10 +63,16 @@
 										<div class="col-sm-4 text-left">{{ ownData.common.artist }}</div>
 										<div class="col-sm-2">{{ getBitrate(ownData.format.bitrate) }} kbps</div>
 										<div class="col-sm-2">
-											<button class="btn btn-primary mx-1" (click)="play()">
+											<button
+												*ngIf="currentSongId !== ownData._id || (currentSongId === ownData._id && !playing)"
+												class="btn btn-primary mx-1 py-0" (click)="playSong(ownData._id)">
 												<i class="fas fa-play"></i>
 											</button>
-											<button class="btn btn-info mx-1" (click)="download()">
+											<button *ngIf="currentSongId === ownData._id && playing"
+												class="btn btn-primary mx-1 py-0" (click)="pauseSong()">
+												<i class="fas fa-pause"></i>
+											</button>
+											<button class="btn btn-info mx-1 py-0" (click)="download()">
 												<i class="fas fa-download"></i>
 											</button>
 										</div>
@@ -93,10 +99,16 @@
 										<div class="col-sm-4 text-left">{{ otherData.common.artist }}</div>
 										<div class="col-sm-2">{{ getBitrate(otherData.format.bitrate) }} kbps</div>
 										<div class="col-sm-2">
-											<button class="btn btn-primary mx-1" (click)="play()">
+											<button
+												*ngIf="currentSongId !== otherData._id || (currentSongId === otherData._id && !playing)"
+												class="btn btn-primary mx-1 py-0" (click)="playSong(otherData._id, false)">
 												<i class="fas fa-play"></i>
 											</button>
-											<button class="btn btn-info mx-1" (click)="download()">
+											<button *ngIf="currentSongId === otherData._id && playing"
+												class="btn btn-primary mx-1 py-0" (click)="pauseSong()">
+												<i class="fas fa-pause"></i>
+											</button>
+											<button class="btn btn-info mx-1 py-0" (click)="download()">
 												<i class="fas fa-download"></i>
 											</button>
 										</div>
