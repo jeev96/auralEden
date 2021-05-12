@@ -47,7 +47,7 @@ module.exports = {
         return id;
     },
     getRequestIP: function (request) {
-        const ip = request.headers['x-forwarded-for'] || request.socket.remoteAddress;
+        const ip = request.hostname;
         return ip.substr(0, 7) == "::ffff:" ? ip.substr(7) : ip;
     },
     getSearchUrlsFormPeers: function (searchString, peers) {
