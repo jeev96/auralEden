@@ -127,24 +127,24 @@
 							<div class="music-playlist-one mt-2">
 								<ul class="hit-playlist">
 									<li *ngFor="let song of playlist"
-										[ngClass]="{'text-white' :  currentSong && currentSong['_id'] === song[0]}">
+										[ngClass]="{'text-white' :  currentSong && currentSong._id === song._id}">
 										<div class="col-sm-2">
 											<span (click)="pause()"
-												*ngIf="(currentSong && currentSong['_id'] === song[0]) && playing"><i
+												*ngIf="(currentSong && currentSong._id === song._id) && playing"><i
 													class="icon fas fa-pause mr-2"></i></span>
 											<span (click)="play()"
-												*ngIf="(currentSong && currentSong['_id'] === song[0]) && !playing"><i
+												*ngIf="(currentSong && currentSong._id === song._id) && !playing"><i
 													class="icon fas fa-play mr-2"></i></span>
-											<span (click)="changeCurrentSong(song[0])"
-												*ngIf="currentSong && currentSong['_id'] !== song[0]"><i
+											<span (click)="changeCurrentSong(song)"
+												*ngIf="(currentSong && currentSong._id !== song._id) || !currentSong"><i
 													class="icon fas fa-play mr-2"></i></span>
 										</div>
-										<span class="song-name col-sm-6">{{ song[1] }}</span>
-										<span class="dur col-sm-2">{{ song[4] }}</span>
-										<span class="col-sm-1" (click)="removeFromPlaylist(song[0])">
+										<span class="song-name col-sm-6">{{ song.name }}</span>
+										<span class="dur col-sm-2">{{ getSongDuration(song.format.duration.$numberDecimal) }}</span>
+										<span class="col-sm-1" (click)="removeFromPlaylist(song._id)">
 											<i title="Remove from Playlist" class="icon fa fa-times"></i>
 										</span>
-										<span class="col-sm-1" (click)="downloadSong(song[0], song[1])">
+										<span class="col-sm-1" (click)="downloadSong(song, song.name)">
 											<i title="Download" class="icon fa fa-download"></i>
 										</span>
 									</li>

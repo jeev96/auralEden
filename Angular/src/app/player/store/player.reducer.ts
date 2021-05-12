@@ -110,7 +110,7 @@ export function playerReducer(state = initialState, action: PlayerActions.Player
 			return {
 				...state,
 				playlist: state.playlist.filter((song) => {
-					return song[0] !== action.payload;
+					return song._id !== action.payload;
 				})
 			}
 		case PlayerActions.CLEAR_PLAYLIST:

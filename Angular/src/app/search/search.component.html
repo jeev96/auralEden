@@ -101,7 +101,7 @@
 										<div class="col-sm-2">
 											<button
 												*ngIf="currentSongId !== otherData._id || (currentSongId === otherData._id && !playing)"
-												class="btn btn-primary mx-1 py-0" (click)="playSong(otherData._id, false)">
+												class="btn btn-primary mx-1 py-0" (click)="playSong(otherData._id, otherData.address)">
 												<i class="fas fa-play"></i>
 											</button>
 											<button *ngIf="currentSongId === otherData._id && playing"

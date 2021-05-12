@@ -60,7 +60,7 @@ export class LibraryComponent implements OnInit, OnDestroy {
 				this.currentSongId = playerData.currentSong["_id"];
 			}
 			this.playing = playerData.playing;
-			this.playlistIds = playerData.playlist.map(song => song[0]);
+			this.playlistIds = playerData.playlist.map(song => song._id);
 		});
 		this.dtOptions = {
 			columns: [
@@ -141,17 +141,17 @@ export class LibraryComponent implements OnInit, OnDestroy {
 		this.store.dispatch(new PlayerActions.PauseSongRequest());
 	}
 
-	addToPlaylist(song) {
+	addToPlaylist(songId) {
 		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.ADD_PLAYLIST_SONG_REQUEST,
-				data: song
+				data: songId
 			};
 			this.socket.emit("controlDevice", data);
 			return;
 		}
-		this.store.dispatch(new PlayerActions.AddPlaylistSongRequest(song));
+		this.store.dispatch(new PlayerActions.AddPlaylistSongRequest(songId));
 	}
 
 	removeFromPlaylist(songId) {

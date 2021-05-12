@@ -41,9 +41,9 @@ export const environment = {
 
 	// search and stream
 	search: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_SEARCH_PORT}/api/search`,
-	globalSearchData: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_SEARCH_PORT}/api/search/data/`,
-	globalStream: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_SEARCH_PORT}/api/stream/`,
-	globalDownload: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_SEARCH_PORT}/api/stream/download/`,
+	globalSearchData: (ip, port) => `http://${ip}:${port}/api/search/data/`,
+	globalStream: (ip, port) => `http://${ip}:${port}/api/stream/`,
+	globalDownload: (ip, port) => `http://${ip}:${port}/api/stream/download/`,
 };
 
 /*

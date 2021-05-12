@@ -33,6 +33,7 @@ router.get("/albumArt/:id", async function (req, res) {
 
 router.get("/:id", async function (req, res) {
     try {
+        console.log("global stream");
         const dbEntry = await dbService.findById(req.params.id);
         const type = mime.lookup(dbEntry.location);
 

@@ -20,8 +20,6 @@ export interface LibraryResponseData {
 @Injectable()
 export class LibraryEffects {
 	constructor(private actions$: Actions, private http: HttpClient, private store: Store<fromApp.AppState>) { }
-
-
 	getLibraryDataRequest$ = createEffect(() =>
 		this.actions$.pipe(ofType(LibraryActions.GET_LIBRARY_DATA_REQUEST), switchMap((libraryActions: LibraryActions.GetLibraryDataRequest) => {
 			return this.http.get<LibraryResponseData>(environment.getLibraryData);

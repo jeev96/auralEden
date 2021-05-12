@@ -62,7 +62,7 @@
 					<td style="padding: 20px; font-weight: 500">
 						<span *ngIf="currentSongId !== song[0] || (currentSongId === song[0] && !playing)" (click)="playSong(song[0])"><i title="Play" class="icon fas fa-play mx-1"></i></span>
 						<span *ngIf="currentSongId === song[0] && playing" (click)="pauseSong()"><i title="Pause" class="icon fas fa-pause mx-1"></i></span>
-						<span *ngIf="playlistIds.indexOf(song[0]) === -1" (click)="addToPlaylist(song)"><i title="Add to Playlist" class="icon fas fa-stream mx-1"></i></span>
+						<span *ngIf="playlistIds.indexOf(song[0]) === -1" (click)="addToPlaylist(song[0])"><i title="Add to Playlist" class="icon fas fa-stream mx-1"></i></span>
 						<span *ngIf="playlistIds.indexOf(song[0]) !== -1" (click)="removeFromPlaylist(song[0])"><i title="Remove to Playlist" class="icon fas fa-times mx-1"></i></span>
 					</td>
 				</tr>

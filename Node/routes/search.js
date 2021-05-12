@@ -31,8 +31,10 @@ router.get("/:searchString", async function (req, res) {
         const results = await searchService.getLocalData(req.params.searchString);
         return res.status(200).send({
             data: results,
-            ip: utilService.getRequestIP(req),
-            port: miscConstants.APPLICATION_SEARCH_PORT
+            address: {
+                ip: utilService.getRequestIP(req),
+                port: miscConstants.APPLICATION_SEARCH_PORT
+            }
         });
     } catch (error) {
         console.log(error);
@@ -46,12 +48,14 @@ router.get("/:searchString", async function (req, res) {
 // get single file data
 router.get("/data/:id", async function (req, res) {
     try {
+        console.log("global search data");
         const data = await dbService.findById(req.params.id);
-
         return res.status(200).send({
             ...utilService.cleanSearchData(data),
-            ip: utilService.getRequestIP(req),
-            port: miscConstants.APPLICATION_SEARCH_PORT
+            address: {
+                ip: utilService.getRequestIP(req),
+                port: miscConstants.APPLICATION_SEARCH_PORT
+            }
         });
     } catch (error) {
         return res.status(500).send({

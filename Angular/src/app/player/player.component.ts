@@ -131,17 +131,18 @@ export class PlayerComponent implements OnInit, OnDestroy {
 		this.store.dispatch(new PlayerActions.StopSongRequest());
 	}
 
-	changeCurrentSong(songId) {
+	changeCurrentSong(song) {
 		if (this.selectedDevice && this.getDeviceId() !== this.selectedDevice) {
 			const data = {
 				deviceId: this.selectedDevice,
 				command: PlayerActions.CURRENT_SONG_REQUEST,
-				data: songId
+				data: song._id
 			};
 			this.socket.emit("controlDevice", data);
 			return;
 		}
-		this.store.dispatch(new PlayerActions.CurrentSongRequest(songId));
+
+		this.store.dispatch(new PlayerActions.CurrentSongRequest(song._id, song.address));
 	}
 
 	next() {
@@ -225,8 +226,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
 		this.store.dispatch(new PlayerActions.SeekTrackRequest({ timeElapsed: +value, manualEntry: isManual }));
 	}
 
-	downloadSong(songId, title = "download") {
-		return this.http.get(environment.streamUrl + songId, {
+	downloadSong(song, title = "download") {
+		const downloadUrl = song.address ? environment.globalStream(song.address.ip, song.address.port) : environment.streamUrl;
+		return this.http.get(downloadUrl + song._id, {
 			responseType: "blob",
 		}).pipe(map(res => {
 			return {
@@ -248,6 +250,10 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
 	roundNumber(val: number) {
 		return Math.trunc(val);
+	}
+
+	getSongDuration(val: number) {
+		return Math.round(val / 60) + ":" + (Math.round(val % 60) > 9 ? Math.round(val % 60) : "0" + Math.round(val % 60))
 	}
 
 	formatTime(time: number, format: string = "HH:mm:ss") {

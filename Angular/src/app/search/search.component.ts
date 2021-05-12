@@ -62,8 +62,8 @@ export class SearchComponent implements OnInit, OnDestroy {
 		this.store.dispatch(new SearchActions.SearchRequest(this.searchForm.value.searchString));
 	}
 
-	playSong(songId, isLocal = true) {
-		this.store.dispatch(new PlayerActions.CurrentSongRequest(songId, isLocal));
+	playSong(songId, address = null) {
+		this.store.dispatch(new PlayerActions.CurrentSongRequest(songId, address));
 	}
 
 	pauseSong() {

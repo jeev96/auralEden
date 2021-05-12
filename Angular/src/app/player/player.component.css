@@ -111,3 +111,10 @@
 	max-width: 100%;
 
 }
+
+.song-name {
+	font-weight: 400;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

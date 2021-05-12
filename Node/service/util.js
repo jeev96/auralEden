@@ -27,8 +27,10 @@ module.exports = {
             const searchResults = dataEntry.data.map(element => {
                 return {
                     ...element,
-                    ip: dataEntry.ip,
-                    port: dataEntry.port
+                    address: {
+                        ip: dataEntry.address.ip,
+                        port: dataEntry.address.port
+                    }
                 }
             });
             cleanedData.push(...searchResults);

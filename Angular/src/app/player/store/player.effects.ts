@@ -33,8 +33,10 @@ export interface SongResponseData {
 		bitrate: Number,
 		duration: Number
 	},
-	ip?: string,
-	port?: number
+	address?: {
+		ip: string,
+		port: number
+	}
 }
 
 @Injectable()
@@ -85,11 +87,13 @@ export class PlayerEffects {
 
 	currentSongRequest$ = createEffect(() =>
 		this.actions$.pipe(ofType(PlayerActions.CURRENT_SONG_REQUEST), switchMap((playerActions: PlayerActions.CurrentSongRequest) => {
-			const url = playerActions.islocal ? environment.getLibraryData + "/" + playerActions.payload : environment.globalSearchData + playerActions.payload;
+			const url = !playerActions.address ? environment.getLibraryData + "/" + playerActions.payload : environment.globalSearchData(playerActions.address.ip, playerActions.address.port) + playerActions.payload;
 			return this.http.get<SongResponseData>(url);
 		}), map((response) => {
-			const streamUrl = response.ip ? environment.globalStream : environment.streamUrl;
-			this.playerService.setAudioElementSource(streamUrl + response["_id"]);
+			const streamUrl = response.address ? environment.globalStream(response.address.ip, response.address.port) : environment.streamUrl;
+			console.log(streamUrl);
+
+			this.playerService.setAudioElementSource(streamUrl + response._id);
 			return new PlayerActions.CurrentSong(response);
 		}), catchError((error: any) => {
 			return of(new PlayerActions.PlayerError(error.message));
@@ -99,16 +103,9 @@ export class PlayerEffects {
 	currentSong$ = createEffect(() =>
 		this.actions$.pipe(ofType(PlayerActions.CURRENT_SONG), withLatestFrom(this.store.select("player")), map(([actionData, playerState]) => {
 			this.playerService.playAudioElementSource();
-			return new PlayerActions.AddPlaylistSongRequest([
-				playerState.currentSong._id.toString(),
-				playerState.currentSong.name,
-				playerState.currentSong.common.artist ? playerState.currentSong.common.artist : "unknown",
-				playerState.currentSong.common.album ? playerState.currentSong.common.album : "unknown",
-				Math.round(playerState.currentSong.format.duration.$numberDecimal / 60) + ":" + (Math.round(playerState.currentSong.format.duration.$numberDecimal % 60) > 9 ? Math.round(playerState.currentSong.format.duration.$numberDecimal % 60) : "0" + Math.round(playerState.currentSong.format.duration.$numberDecimal % 60)),
-				playerState.currentSong.common.rating,
-				Math.round(playerState.currentSong.format.bitrate / 1000),
-				null
-			]);
+			console.log(playerState.currentSong);
+
+			return new PlayerActions.AddPlaylistSongRequest(playerState.currentSong._id, playerState.currentSong.address);
 		}))
 	)
 
@@ -117,7 +114,7 @@ export class PlayerEffects {
 			if (playerState.currentSong == null && playerState.playlist.length === 0) {
 				return new PlayerActions.ClearPlayerRequest();
 			} else if (playerState.currentSong == null && playerState.playlist.length > 0) {
-				return new PlayerActions.CurrentSongRequest(playerState.playlist[0][0]);
+				return new PlayerActions.CurrentSongRequest(playerState.playlist[0]["_id"], playerState.playlist[0]["address"]);
 			} else if (playerState.stopped == true && playerState.currentSong != null) {
 				const streamUrl = playerState.currentSong.ip ? environment.globalStream : environment.streamUrl;
 				this.playerService.setAudioElementSource(streamUrl + playerState.currentSong["_id"]);
@@ -157,12 +154,15 @@ export class PlayerEffects {
 	);
 
 	addToPlaylist$ = createEffect(() =>
-		this.actions$.pipe(ofType(PlayerActions.ADD_PLAYLIST_SONG_REQUEST), withLatestFrom(this.store.select("player")), map(([actionData, playerState]) => {
-			const index = playerState.playlist.map((song) => song[0]).indexOf(actionData["payload"][0]);
+		this.actions$.pipe(ofType(PlayerActions.ADD_PLAYLIST_SONG_REQUEST), switchMap((playerActions: PlayerActions.AddPlaylistSongRequest) => {
+			const url = !playerActions.address ? environment.getLibraryData + "/" + playerActions.payload : environment.globalSearchData(playerActions.address.ip, playerActions.address.port) + playerActions.payload;
+			return this.http.get<SongResponseData>(url);
+		}), withLatestFrom(this.store.select("player")), map(([response, playerState]) => {
+			const index = playerState.playlist.map((song) => song._id).indexOf(response._id);
 			if (index >= 0) {
 				return new PlayerActions.NoopAction();
 			}
-			return new PlayerActions.AddPlaylistSong(actionData["payload"]);
+			return new PlayerActions.AddPlaylistSong(response);
 		}), catchError((error: any) => {
 			return of(new PlayerActions.PlayerError(error.message));
 		}))
@@ -183,14 +183,14 @@ export class PlayerEffects {
 
 	playNextSong$ = createEffect(() =>
 		this.actions$.pipe(ofType(PlayerActions.PLAY_NEXT_SONG_REQUEST), withLatestFrom(this.store.select("player")), map(([actionData, playerState]) => {
-			const index = playerState.playlist.map((song) => song[0]).indexOf(playerState.currentSong["_id"]);
+			const index = playerState.playlist.map((song) => song._id).indexOf(playerState.currentSong["_id"]);
 			if (playerState.playlist.length === 0) {
 				return new PlayerActions.ClearPlayer();
 			}
 			if (index < 0 || index === playerState.playlist.length - 1) {
 				return new PlayerActions.StopSongRequest();
 			}
-			return new PlayerActions.CurrentSongRequest(playerState.playlist[index + 1][0]);
+			return new PlayerActions.CurrentSongRequest(playerState.playlist[index + 1]["_id"], playerState.playlist[index]["address"]);
 		}), catchError((error: any) => {
 			return of(new PlayerActions.PlayerError(error.message));
 		}))
@@ -198,14 +198,14 @@ export class PlayerEffects {
 
 	playPreviousSong$ = createEffect(() =>
 		this.actions$.pipe(ofType(PlayerActions.PLAY_PREVIOUS_SONG_REQUEST), withLatestFrom(this.store.select("player")), map(([actionData, playerState]) => {
-			const index = playerState.playlist.map((song) => song[0]).indexOf(playerState.currentSong["_id"]);
+			const index = playerState.playlist.map((song) => song._id).indexOf(playerState.currentSong["_id"]);
 			if (this.playerService.getCurrentTime() > 5) {
-				return new PlayerActions.CurrentSongRequest(playerState.playlist[index][0]);
+				return new PlayerActions.CurrentSongRequest(playerState.playlist[index]["_id"], playerState.playlist[index]["address"]);
 			}
 			if (index <= 0) {
 				return new PlayerActions.StopSongRequest();
 			}
-			return new PlayerActions.CurrentSongRequest(playerState.playlist[index - 1][0]);
+			return new PlayerActions.CurrentSongRequest(playerState.playlist[index - 1]["_id"], playerState.playlist[index]["address"]);
 		}), catchError((error: any) => {
 			return of(new PlayerActions.PlayerError(error.message));
 		}))
