@@ -24,3 +24,7 @@ form input {
 .stats:hover {
 	background: rgba(10, 10, 10, .1);
 }
+
+.mini-spinner{
+	max-height: 29px;
+}

@@ -44,6 +44,9 @@ export const environment = {
 	globalSearchData: (ip, port) => `http://${ip}:${port}/api/search/data/`,
 	globalStream: (ip, port) => `http://${ip}:${port}/api/stream/`,
 	globalDownload: (ip, port) => `http://${ip}:${port}/api/stream/download/`,
+
+	// torrent constants
+	DEFAULT_SAVE_LOCATION: "D:/Downloads/AuralEden/",
 };
 
 /*

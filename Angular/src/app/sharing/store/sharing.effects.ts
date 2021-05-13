@@ -3,10 +3,10 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { of } from "rxjs";
 import { catchError, map, switchMap } from "rxjs/operators";
+import { TorrentData } from "src/app/models/TorrentData.model";
 import { environment } from "src/environments/environment";
 
 import * as SharingActions from "./sharing.actions";
-
 
 @Injectable()
 export class SharingEffects {
@@ -14,16 +14,7 @@ export class SharingEffects {
 
 	startSharingRequest$ = createEffect(() =>
 		this.actions$.pipe(ofType(SharingActions.START_SHARING_REQUEST), switchMap((sharingAction: SharingActions.StartSharingRequest) => {
-			return this.http.post<{
-				name: string,
-				downloaded: number,
-				uploaded: number,
-				upSpeed: number,
-				downSpeed: number,
-				completed: number,
-				size: number,
-				shareString: string
-			}>(environment.shareContent, {
+			return this.http.post<TorrentData>(environment.shareContent, {
 				path: sharingAction.payload
 			});
 		}), map((response) => {
@@ -48,16 +39,9 @@ export class SharingEffects {
 
 	startDownloadRequest$ = createEffect(() =>
 		this.actions$.pipe(ofType(SharingActions.START_DOWNLOAD_REQUEST), switchMap((sharingAction: SharingActions.StartDownloadRequest) => {
-			return this.http.post<{
-				name: string,
-				downloaded: number,
-				uploaded: number,
-				upSpeed: number,
-				downSpeed: number,
-				completed: number,
-				size: number,
-				shareString: string
-			}>(environment.downloadContent, {
+			console.log(sharingAction);
+
+			return this.http.post<TorrentData>(environment.downloadContent, {
 				shareString: sharingAction.payload.encryptedString,
 				saveLocation: sharingAction.payload.location
 			});

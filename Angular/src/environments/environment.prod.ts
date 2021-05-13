@@ -34,6 +34,12 @@ export const environment = {
 	stopTorrent: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/share/stop-torrent`,
 	allTorrents: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_LOCAL_PORT}/api/share/all-torrents`,
 
-	// search
+	// search and stream
 	search: `http://${APPLICATION_LOCAL_IP}:${APPLICATION_SEARCH_PORT}/api/search`,
+	globalSearchData: (ip, port) => `http://${ip}:${port}/api/search/data/`,
+	globalStream: (ip, port) => `http://${ip}:${port}/api/stream/`,
+	globalDownload: (ip, port) => `http://${ip}:${port}/api/stream/download/`,
+
+	// torrent constants
+	DEFAULT_SAVE_LOCATION: "D:\\Downloads\\AuralEden\\",
 };

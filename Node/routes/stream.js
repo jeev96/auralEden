@@ -6,6 +6,8 @@ const mime = require('mime-types');
 
 const dbService = require("../service/Database/songMetaData");
 const musicService = require("../service/musicInfo");
+const shareService = require("../service/share");
+
 
 // get album art
 router.get("/albumArt/:id", async function (req, res) {
@@ -70,7 +72,16 @@ router.get("/:id", async function (req, res) {
 })
 
 router.get("/download/:id", async function (req, res) {
-    
+    dbService.findById(req.params.id).then(songData => {
+        return shareService.shareContent(songData.location);
+    }).then((shareData) => {
+        return res.status(200).send(shareData);
+    }).catch((error) => {
+        return res.status(500).send({
+            status: "faliure",
+            error: error.message
+        });
+    })
 })
 
 module.exports = router;

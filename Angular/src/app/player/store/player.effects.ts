@@ -91,8 +91,6 @@ export class PlayerEffects {
 			return this.http.get<SongResponseData>(url);
 		}), map((response) => {
 			const streamUrl = response.address ? environment.globalStream(response.address.ip, response.address.port) : environment.streamUrl;
-			console.log(streamUrl);
-
 			this.playerService.setAudioElementSource(streamUrl + response._id);
 			return new PlayerActions.CurrentSong(response);
 		}), catchError((error: any) => {

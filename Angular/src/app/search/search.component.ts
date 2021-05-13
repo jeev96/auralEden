@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
+import { PlayerService } from '../player/player.service';
 import * as fromApp from "../store/app.reducer";
 import * as SearchActions from "./store/search.actions";
 import * as PlayerActions from "../player/store/player.actions";
@@ -23,11 +24,15 @@ export class SearchComponent implements OnInit, OnDestroy {
 	currentSongId = null;
 	playing = false;
 	playlistIds = [];
+	searchDownloadLoading = [];
 
 	private storeSub: Subscription;
 	private playerSub: Subscription;
 
-	constructor(private store: Store<fromApp.AppState>,) { }
+	constructor(
+		private store: Store<fromApp.AppState>,
+		private playerService: PlayerService,
+	) { }
 
 	ngOnInit(): void {
 		this.initForm();
@@ -36,6 +41,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 			this.searchDataOthers = searchData.searchDataOthers ? searchData.searchDataOthers : [];
 			this.isLoading = searchData.searchLoading;
 			this.searchError = searchData.searchError;
+			this.searchDownloadLoading = searchData.searchDownloadLoading;
 		});
 		this.playerSub = this.store.select("player").subscribe(playerData => {
 			if (playerData.currentSong) {
@@ -58,7 +64,6 @@ export class SearchComponent implements OnInit, OnDestroy {
 	}
 
 	onSubmit() {
-		console.log(this.searchForm.value.searchString);
 		this.store.dispatch(new SearchActions.SearchRequest(this.searchForm.value.searchString));
 	}
 
@@ -78,8 +83,12 @@ export class SearchComponent implements OnInit, OnDestroy {
 		this.store.dispatch(new PlayerActions.DeletePlaylistSongRequest(songId));
 	}
 
-	download() {
-
+	download(song) {
+		if (!song.address) {
+			this.playerService.downloadSong(song, song.name);
+			return;
+		}
+		this.store.dispatch(new SearchActions.SearchDownloadRequest(song._id, song.address));
 	}
 
 	displayCompleteInfo(infoObject) {

@@ -48,6 +48,7 @@ function createShareClient(contentPath) {
 function createDownloadClient(shareString, saveLocation) {
     return new Promise((resolve, reject) => {
         try {
+            console.log(saveLocation);
             if (!fs.existsSync(saveLocation)) {
                 return reject(new Error("Save location does not Exist!"));
             }

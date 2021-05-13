@@ -5,6 +5,7 @@ export interface State {
 	searchDataOwn: any,
 	searchDataOthers: any,
 	searchError: string,
+	searchDownloadLoading: any
 }
 
 const initialState: State = {
@@ -12,6 +13,7 @@ const initialState: State = {
 	searchDataOwn: [],
 	searchDataOthers: [],
 	searchError: null,
+	searchDownloadLoading: []
 }
 
 export function searchReducer(state = initialState, action: SearchActions.SearchActions) {
@@ -31,6 +33,17 @@ export function searchReducer(state = initialState, action: SearchActions.Search
 				searchDataOwn: [...state.searchDataOwn, ...action.payload.ownServer],
 				searchDataOthers: [...state.searchDataOthers, ...action.payload.otherServers],
 				searchError: null,
+			}
+		case SearchActions.SEARCH_DOWNLOAD_REQUEST:
+			return {
+				...state,
+				searchDownloadLoading: [...state.searchDownloadLoading, action.payload]
+			}
+		case SearchActions.SEARCH_DOWNLOAD:
+			const downloading = state.searchDownloadLoading.filter(element => element !== action.payload);
+			return {
+				...state,
+				searchDownloadLoading: downloading
 			}
 		case SearchActions.SEARCH_ERROR:
 			return {

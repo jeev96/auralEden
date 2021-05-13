@@ -1,4 +1,5 @@
 import { Action } from "@ngrx/store";
+import { TorrentData } from "src/app/models/TorrentData.model";
 
 export const START_SHARING_REQUEST = "[SHARING] START SHARING REQUEST";
 export const START_SHARING = "[SHARING] START SHARING";
@@ -26,16 +27,7 @@ export class StartSharingRequest implements Action {
 export class StartSharing implements Action {
 	readonly type = START_SHARING;
 
-	constructor(public payload: {
-		name: string,
-		downloaded: number,
-		uploaded: number,
-		upSpeed: number,
-		downSpeed: number,
-		completed: number,
-		size: number,
-		shareString: string,
-	}) { }
+	constructor(public payload: TorrentData) { }
 }
 
 export class StartDownloadRequest implements Action {
@@ -46,16 +38,7 @@ export class StartDownloadRequest implements Action {
 export class StartDownload implements Action {
 	readonly type = START_DOWNLOAD;
 
-	constructor(public payload: {
-		name: string,
-		downloaded: number,
-		uploaded: number,
-		upSpeed: number,
-		downSpeed: number,
-		completed: number,
-		size: number,
-		shareString: string,
-	}) { }
+	constructor(public payload: TorrentData) { }
 }
 
 export class StopTorrentRequest implements Action {

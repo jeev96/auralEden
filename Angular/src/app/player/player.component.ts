@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { map } from "rxjs/operators";
 import { Store } from '@ngrx/store';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
@@ -7,7 +6,6 @@ import { environment } from 'src/environments/environment';
 
 import * as fromApp from "../store/app.reducer";
 import * as PlayerActions from "./store/player.actions";
-import { HttpClient } from '@angular/common/http';
 import { PlayerService } from './player.service';
 import { Socket } from 'ngx-socket-io';
 
@@ -37,7 +35,6 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private store: Store<fromApp.AppState>,
-		private http: HttpClient,
 		private socket: Socket,
 		private playerService: PlayerService
 	) { }
@@ -227,25 +224,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	downloadSong(song, title = "download") {
-		const downloadUrl = song.address ? environment.globalStream(song.address.ip, song.address.port) : environment.streamUrl;
-		return this.http.get(downloadUrl + song._id, {
-			responseType: "blob",
-		}).pipe(map(res => {
-			return {
-				filename: title,
-				data: res
-			};
-		})).subscribe(res => {
-			let url = window.URL.createObjectURL(res.data);
-			let a = document.createElement('a');
-			document.body.appendChild(a);
-			a.setAttribute('style', 'display: none');
-			a.href = url;
-			a.download = res.filename;
-			a.click();
-			window.URL.revokeObjectURL(url);
-			a.remove();
-		});
+		this.playerService.downloadSong(song, title);
 	}
 
 	roundNumber(val: number) {
