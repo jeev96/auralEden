@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const request = require("request-promise");
 const http = require('http');
+const path = require('path');
 
 module.exports = {
     cleanSearchData: function (data) {
@@ -8,6 +9,7 @@ module.exports = {
             return {
                 _id: data._id,
                 name: data.name,
+                filename: path.basename(data.location),
                 format: data.format,
                 common: data.common
             }
@@ -16,6 +18,7 @@ module.exports = {
             return {
                 _id: element._id,
                 name: element.name,
+                filename: path.basename(element.location),
                 format: element.format,
                 common: element.common
             }

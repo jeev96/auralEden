@@ -23,7 +23,7 @@ let songMetaDataSchema = new mongoose.Schema({
         sampleRate: Number,
         numberOfChannels: Number,
         bitrate: Number,
-        duration: mongoose.Decimal128
+        duration: Number
     },
     location: {
         type: String,

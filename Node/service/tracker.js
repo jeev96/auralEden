@@ -24,13 +24,19 @@ client.on('warning', function (warn) {
 })
 
 client.on('update', function (data) {
-    if (data.peers) {
+    if (data.peers || data.peers6) {
         peers = group(data.peers, 6).map(address => {
             return {
                 ip: address.slice(0, 4).join('.'),
                 port: address.readUInt16BE(4)
             }
         })
+        // peers = group(data.peers6, 18).map(address => {
+        //     return {
+        //         ip: address.slice(0, 16).map(num => num.toString(16)),
+        //         port: address.readUInt16BE(4)
+        //     }
+        // })
         console.log(peers);
         peerIPs = peers;
     }

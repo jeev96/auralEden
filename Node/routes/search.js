@@ -27,7 +27,7 @@ router.post("/", async function (req, res) {
 // send search results from own server
 router.get("/:searchString", async function (req, res) {
     try {
-        console.log("global search");
+        console.log("global search: " + req.params.searchString);
         const results = await searchService.getLocalData(req.params.searchString);
         return res.status(200).send({
             data: results,

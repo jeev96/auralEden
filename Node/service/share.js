@@ -3,8 +3,15 @@ const fs = require('fs-extra');
 
 const miscConstants = require("../constants/misc");
 
-let clientUpload = new WebTorrent({ torrentPort: 40997 });
-let clientDownload = new WebTorrent();
+let clientUpload = new WebTorrent({ torrentPort: 41000, dht: true, announce: miscConstants.TRACKER_URLS });
+let clientDownload = new WebTorrent({ peerId: miscConstants.PEER_ID });
+
+function checkIfAlreadySeeding(contentPath) {
+    return clientUpload.torrents.find((torrent) => {
+        let torrentPath = torrent.path + "\\" + torrent.name;
+        return torrentPath === contentPath;
+    })
+}
 
 function createShareClient(contentPath) {
     return new Promise((resolve, reject) => {
@@ -12,6 +19,23 @@ function createShareClient(contentPath) {
             if (!fs.existsSync(contentPath)) {
                 return reject(new Error("Path does not Exist!"));
             }
+            let alreadySeeding = checkIfAlreadySeeding(contentPath);
+
+            if(alreadySeeding != undefined) {
+                console.log("Already Seeding.....");
+                return resolve({
+                    name: alreadySeeding.name,
+                    torrentId: alreadySeeding.infoHash,
+                    downloaded: alreadySeeding.downloaded,
+                    uploaded: alreadySeeding.uploaded,
+                    upSpeed: alreadySeeding.uploadSpeed,
+                    downSpeed: alreadySeeding.downloadSpeed,
+                    completed: alreadySeeding.progress,
+                    size: alreadySeeding.length,
+                    shareString: alreadySeeding.magnetURI
+                });
+            }
+
             console.log("Starting Seeder.....");
             clientUpload.seed(contentPath, {
                 announce: miscConstants.TRACKER_URLS
@@ -36,7 +60,7 @@ function createShareClient(contentPath) {
                     downSpeed: torrent.downloadSpeed,
                     completed: torrent.progress,
                     size: torrent.length,
-                    shareString: torrent.magnetURI,
+                    shareString: torrent.magnetURI
                 });
             })
         } catch (error) {
