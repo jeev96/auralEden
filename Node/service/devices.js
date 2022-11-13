@@ -1,7 +1,6 @@
 const userDbService = require("./Database/user");
 
 module.exports = {
-
     changeDeviceStatus: async function (username, deviceId, online = false, active = false) {
         try {
             let user = await userDbService.findOne({ username: username });

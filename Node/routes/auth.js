@@ -67,7 +67,8 @@ router.post('/signin', async function (req, res) {
             }
         });
     } catch (error) {
-        return res.status(500).send({ success: false, msg: error.message });
+        console.log(error);
+        // return res.status(500).send({ success: false, msg: error.message });
     }
 });
 

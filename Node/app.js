@@ -17,6 +17,7 @@ let devicesRoutes = require("./routes/devices");
 let libraryRoutes = require("./routes/library");
 let sharingRoutes = require("./routes/sharing");
 let searchRoutes = require("./routes/search");
+let deviceSearchRoutes = require("./routes/deviceSearch");
 let streamRoutes = require("./routes/stream");
 let songRoutes = require("./routes/song");
 
@@ -61,6 +62,7 @@ app.use("/api/library", libraryRoutes);
 app.use("/api/share", sharingRoutes);
 appSearch.use("/api/search", searchRoutes);
 appSearch.use("/api/stream", streamRoutes);
+appSearch.use("/api/deviceSearch", deviceSearchRoutes);
 app.use("/api/song", songRoutes);
 
 const server = app.listen(miscConstants.APPLICATION_LOCAL_PORT, function () {
@@ -83,6 +85,9 @@ const io = require('socket.io')(server, {
 
 const bitTracker = require("./service/tracker");
 bitTracker.startTracker();
+
+const localDiscovery = require("./service/localDiscovery");
+localDiscovery.startDiscoveryService();
 
 const socketService = require("./service/socket")(io);
 const devicesService = require("./service/devices");

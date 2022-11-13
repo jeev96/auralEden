@@ -13,7 +13,6 @@ const requiredOpts = {
 }
 
 const client = new Client(requiredOpts);
-// client.setInterval(1000 * 15);
 
 client.on('error', function (err) {
     console.log("Tracker Error: " + err.message)

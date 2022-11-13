@@ -5,6 +5,9 @@ let songMetaDataSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    filesize: {
+        type: Number,
+    },
     common: {
         albumartist: String,
         genre: [String],

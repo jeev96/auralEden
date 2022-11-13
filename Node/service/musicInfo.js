@@ -1,6 +1,7 @@
 const musicMetadata = require('music-metadata');
 const util = require('util');
 const path = require("path");
+const fs = require("fs-extra");
 
 async function readMetadata(path, skipCovers = true) {
     try {
@@ -14,6 +15,7 @@ async function readMetadata(path, skipCovers = true) {
 function parseMetadata(metaData, location) {
     data = {
         name: metaData.common.title ? metaData.common.title : path.parse(location).name,
+        filesize: fs.statSync(location).size,
         common: {
             albumartist: metaData.common.albumartist,
             genre: metaData.common.genre,

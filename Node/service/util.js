@@ -1,6 +1,4 @@
 const crypto = require('crypto');
-const request = require("request-promise");
-const http = require('http');
 const path = require('path');
 
 module.exports = {
@@ -9,6 +7,7 @@ module.exports = {
             return {
                 _id: data._id,
                 name: data.name,
+                filesize: element.filesize,
                 filename: path.basename(data.location),
                 format: data.format,
                 common: data.common
@@ -18,6 +17,7 @@ module.exports = {
             return {
                 _id: element._id,
                 name: element.name,
+                filesize: element.filesize,
                 filename: path.basename(element.location),
                 format: element.format,
                 common: element.common
@@ -53,7 +53,7 @@ module.exports = {
         const ip = request.hostname;
         return ip.substr(0, 7) == "::ffff:" ? ip.substr(7) : ip;
     },
-    getSearchUrlsFormPeers: function (searchString, peers) {
+    getSearchUrlsFromPeers: function (searchString, peers) {
         if (searchString == null || peers.length === 0) {
             return;
         }
@@ -62,21 +62,5 @@ module.exports = {
             return `http://${peer.ip}:${peer.port}/api/search/${searchString.trim()}`;
         })
         return urls;
-    },
-    createGlobalSearchRequest: async function (url) {
-        return new Promise(function (resolve, reject) {
-            let body = '';
-            http.get(url, function (res) {
-                res.on('data', function (chunk) {
-                    body += chunk;
-                });
-                res.on('end', function () {
-                    resolve(JSON.parse(body));
-                });
-            }).on("error", function (error) {
-                console.log(error.message);
-                resolve(null);
-            });
-        })
     }
 }
